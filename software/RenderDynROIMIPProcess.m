@@ -53,7 +53,7 @@ classdef  RenderDynROIMIPProcess < RenderFullMIPProcess
                 super_args{4} = funParams;
             end
             obj = obj@RenderFullMIPProcess(super_args{:});
-            obj.is3Dcompatible_ = false; % outputs are 2D % QZ ask P output 2D or 3D???
+            obj.is3Dcompatible_ = false; % outputs are 2D
         end
 
     end

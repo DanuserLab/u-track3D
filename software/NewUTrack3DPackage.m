@@ -50,7 +50,7 @@ classdef NewUTrack3DPackage < Package
             name = 'New U-Track 3D';
         end
 
-        function m = getDependencyMatrix(i,j)  % QZ come back to this later
+        function m = getDependencyMatrix(i,j)
             %    1 2 3 4 5 6 7 {processes}           
             m = [0 0 0 0 0 0 0;  %1 RenderFullMIPProcess
                  0 0 0 0 0 0 0;  %2 PointSourceDetectionProcess3D

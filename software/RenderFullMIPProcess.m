@@ -57,7 +57,7 @@ classdef  RenderFullMIPProcess < ImageProcessingProcess & NonSingularProcess
                 super_args{4} = funParams;
             end
             obj = obj@ImageProcessingProcess(super_args{:});
-            obj.is3Dcompatible_ = false; % outputs are 2D % QZ ask P output 2D or 3D???
+            obj.is3Dcompatible_ = false; % outputs are 2D
         end
 
         function h = draw(obj, varargin) % QZ come back to this later
@@ -141,7 +141,7 @@ classdef  RenderFullMIPProcess < ImageProcessingProcess & NonSingularProcess
             end
         end
         
-        function output = getDrawableOutput(obj, varargin)  % QZ come back to this later
+        function output = getDrawableOutput(obj, varargin)
         
             n = 1;
             output(n).name = 'XY';
