@@ -118,11 +118,11 @@ classdef TracksROI < DynROI
         end
         
         function frame=getStartFrame(obj)
-            frame=min([obj.tracks.startFrame]);
+            frame=max([obj.tracks.startFrame]);
         end
 
         function frame=getEndFrame(obj)
-            frame=max([obj.tracks.endFrame]);
+            frame=min([obj.tracks.endFrame]);
         end
 
         function [minCoord, maxCoord]=getBoundingBox(obj,ref,frameIdx)

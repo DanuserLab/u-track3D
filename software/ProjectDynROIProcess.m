@@ -113,6 +113,7 @@ classdef ProjectDynROIProcess <  NonSingularProcess & handle
             XYFilesPattern = outFilePaths{6, chIdx};
             YZFilesPattern = outFilePaths{7, chIdx};
             XZFilesPattern = outFilePaths{8, chIdx};
+
             imwrite(maxXY, sprintfPath(XYFilesPattern, fIdx), 'Compression', 'none');
             imwrite(maxZY, sprintfPath(YZFilesPattern, fIdx), 'Compression', 'none');
             imwrite(maxZX, sprintfPath(XZFilesPattern, fIdx), 'Compression', 'none');

@@ -421,6 +421,9 @@ end
 
 %% post-processing of linking results
 
+if(~isempty(trackabilityData))
+    trackabilityData.frames=emptyStart+1:(numFrames - emptyEnd);
+end
 
 %this function now breaks up frame-to-frame linked tracks if they do not
 %follow a linear trajectory.  it only runs with the EB3 cost matrix

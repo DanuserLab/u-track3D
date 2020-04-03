@@ -342,7 +342,7 @@ trackabilityCost=cell(1,length(movieInfo));
 samplingLabel=cell(1,length(movieInfo));
 votingLabel=cell(1,length(movieInfo));
 trackabilityCostFull=cell(1,length(movieInfo));
-
+predExpectation(length(movieInfo))=Detections();
 %go over all frames
 for iFrame = 1 : numFrames-1
 
@@ -366,7 +366,9 @@ for iFrame = 1 : numFrames-1
                 dynCostMatParam.featLifetime=featLifetime;
                 dynCostMatParam.trackedFeatureIndx=trackedFeatureIndx;
 
-                [trackabilityCost{iFrame},samplesDetections(iFrame),samplingLabel{iFrame},votingLabel{iFrame},trackabilityCostFull{iFrame}]= ...
+                [trackabilityCost{iFrame+1}, ...
+                    samplesDetections(iFrame+1),samplingLabel{iFrame+1},votingLabel{iFrame+1}, ... 
+                    trackabilityCostFull{iFrame+1},predExpectation(iFrame+1)]= ...
                     simulatedPredictionVoting(kalmanFilterInfo(iFrame),costMatName,costMatParam,dynCostMatParam);
 
             end
@@ -652,17 +654,19 @@ for iFrame = 1 : numFrames-1
 end %(for iFrame=1:numFrames-1)
 
 lastFrameDet=Detections(movieInfo(end));
-samplesDetections(end)=Detections(movieInfo(end));
-trackabilityCost{end}=ones(lastFrameDet.getCard(),1);
-trackabilityCostFull{end}=zeros(lastFrameDet.getCard(),3);
-samplingLabel{end}=ones(lastFrameDet.getCard(),1);
-votingLabel{end}=ones(lastFrameDet.getCard(),1);
+% samplesDetections(end)=Detections(movieInfo(end));
+% trackabilityCost{end}=ones(lastFrameDet.getCard(),1);
+% trackabilityCostFull{end}=zeros(lastFrameDet.getCard(),3);
+% samplingLabel{end}=ones(lastFrameDet.getCard(),1);
+% votingLabel{end}=ones(lastFrameDet.getCard(),1);
 
 trackabilityData.samplesDetections=samplesDetections;
 trackabilityData.trackabilityCost=trackabilityCost;
 trackabilityData.trackabilityCostFull=trackabilityCostFull;
 trackabilityData.samplingLabel=samplingLabel;
 trackabilityData.votingLabel=votingLabel;
+trackabilityData.predExpectation=predExpectation;
+
 
 %add information from last frame to auxiliary matrices
 numRows = size(trackedFeatureIndx,1);

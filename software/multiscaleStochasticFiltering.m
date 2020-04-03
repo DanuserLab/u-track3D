@@ -154,6 +154,7 @@ pos=labelToMovieInfo(labelSeg,vol);
 
 % eliminate duplicate positions, keep the brightest
 if p.RemoveRedundant
+    if(~isempty(pos.xCoord))
     posm=[pos.xCoord(:,1) pos.yCoord(:,1) pos.zCoord(:,1)];
     amp=pos.amp(:,1);
     idx=true(numel(amp),1);
@@ -167,6 +168,7 @@ if p.RemoveRedundant
     pos.yCoord=pos.yCoord(idx,:);
     pos.zCoord=pos.zCoord(idx,:);
     pos.amp=pos.amp(idx,:);
+end
 end 
 
 

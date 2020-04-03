@@ -55,6 +55,9 @@ classdef DetectionProcess < ImageAnalysisProcess
             ip.addOptional('iChan',@(x) isscalar(x) && obj.checkChanNum);
             ip.addOptional('displayProjsProcess',obj.getOwner().searchProcessName('RenderDynROI'),@(x) (isa(x,'RenderDynROI')||iscell(x)));
             ip.addParameter('output','movieInfo',@ischar);
+            ip.addParameter('detections',[]);
+            ip.addParameter('detLabel','depth',@(x) isnumeric(x)||any(strcmpi(x, {'ID', 'time','amplitude','depth','none'})));
+
             ip.addParameter('show',true,@islogical);
             ip.parse(iChan,displayProjsProcess,varargin{:})
             p=ip.Results;
@@ -82,11 +85,32 @@ classdef DetectionProcess < ImageAnalysisProcess
                 overlay.Zup=displayProjs{rIdx}.Zup;
                 overlayCell{rIdx}=overlay;
             end
-            oDetections=Detections(obj.loadChannelOutput(iChan,'output',p.output));
+            if(isempty(p.detections))
+                oDetections=Detections(obj.loadChannelOutput(iChan,'output',p.output));
+            else
+                oDetections=p.detections;
+            end
             %detLabel=cellfun(@(p) p(:,3),oDetections.getPosMatrix(),'unif',0);
 
 
-            detLabel=arrayfun(@(d) double(d.getAllStruct().A),oDetections,'unif',0);
+            if(~isnumeric(p.detLabel))
+                switch p.detLabel
+                case 'amplitude'
+                    detLabel=arrayfun(@(d) double(d.getAllStruct().A),oDetections,'unif',0);
+                case 'ID'
+                    detLabel=arrayfun(@(d) 1:d.getCard(),oDetections,'unif',0);
+                case 'depth'
+                    detLabel=arrayfun(@(d) double(d.getAllStruct().z),oDetections,'unif',0);
+                case 'time'   % Useful for cumulative display
+                    detLabel=arrayfun(@(d) d*ones(1,oDetections(d).getCard()),1:numel(oDetections),'unif',0);
+                case 'none'   
+                    detLabel=arrayfun(@(d) ones(1,oDetections(d).getCard()),1:numel(oDetections),'unif',0);
+                otherwise
+                    error('Undefined label');
+                end
+            else
+                detLabel=p.detLabel;
+            end
 
             for rIdx=1:numel(overlayCell)
                 myColormap=256*jet(256);

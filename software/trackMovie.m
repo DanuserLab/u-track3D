@@ -166,6 +166,11 @@ for i = p.ChannelIndex
 
     if movieData.is3D && (~isempty(p.processBuildDynROI))
         %% replace the trajectory with original detections
+        tracksFinalStripped=rmfield(tracksFinal,'tracksCoordAmpCG');
+        tracksOrigDetect=TracksHandle(tracksFinalStripped,mappedDetections.getStruct()); 
+        tracksFinal=tracksOrigDetect.getStruct()';
+
+        %% Transfrom lab ref back in the DynROI Ref (useful for the GUI)
         if isa(p.processBuildDynROI, 'BuildDynROIProcess')
             dynROICell=p.processBuildDynROI.loadChannelOutput(1); % iChan is mandatory input for BuildDynROIProcess.loadChannelOutput, BuildDynROIProcess used in package.
         else
@@ -173,14 +178,37 @@ for i = p.ChannelIndex
         end
         dynROI=dynROICell{1};
         ref=dynROI.getDefaultRef();
-        tracksFinalStripped=rmfield(tracksFinal,'tracksCoordAmpCG');
-        tracksOrigDetect=TracksHandle(tracksFinalStripped,mappedDetections.getStruct()); 
         tracksDynROIRef=ref.applyBase(tracksOrigDetect);
         [BBmin,BBmax]=dynROI.getBoundingBox(ref);
         tracksDynROIRef.addOffset(-BBmin(1)+1,-BBmin(2)+1,-BBmin(3)+1);
         tracksFinalDynROIRef_oldFormat=tracksDynROIRef.getStruct();
         save(outFilePaths{4,i},'tracksDynROIRef','tracksFinalDynROIRef_oldFormat');
-        tracksFinal=tracksOrigDetect.getStruct()';
+
+        if(p.EstimateTrackability)
+            %% Project debugging information back into lab ref 
+            samples=trackabilityData.samplesDetections.addOffset(-1000,-1000,-1000);
+            samples=ref.applyInvBase(samples);
+            trackabilityData.samplesDetections=samples;
+
+            samples=trackabilityData.predExpectation.addOffset(-1000,-1000,-1000);
+            samples=ref.applyInvBase(samples);
+            trackabilityData.predExpectation=samples;
+
+        end
+    end
+
+    if movieData.is3D && (p.EstimateTrackability)
+        %% Track segment mapping
+        segTrackability=cell(1,length(tracksFinal));
+        for tIdx=1:length(tracksFinal)
+            tr=TracksHandle(tracksFinal(tIdx));
+            nonGap=~tr.gapMask();
+            nonGap=nonGap(1:end-1);  % T-1 segments.
+            linkIdx=find(nonGap);
+            segTrackability{tIdx}=nan(size(nonGap));
+            segTrackability{tIdx}(linkIdx)=arrayfun(@(pIdx) trackabilityData.trackabilityCost{tr.f(pIdx)+1}(tr.tracksFeatIndxCG(pIdx)),linkIdx);
+        end
+        trackabilityData.segTrackability=segTrackability;
     end
     
     save(outFilePaths{1,i},'tracksFinal');

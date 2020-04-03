@@ -38,10 +38,7 @@ function MD=addAnalysisFolder(MD,currentAnalysisRoot,newAnalysisRoot,varargin)
 
     oldRawDataRoot=ip.Results.oldRawDataRoot;
     newRawDataRoot=ip.Results.newRawDataRoot;
-    MD.outputDirectory_
-    currentAnalysisRoot
-    newAnalysisRoot
-    MDAnalysisPath=relocatePath(MD.outputDirectory_, currentAnalysisRoot,  newAnalysisRoot)
+    MDAnalysisPath=relocatePath(MD.outputDirectory_, currentAnalysisRoot,  newAnalysisRoot);
     mkdirRobust(MDAnalysisPath);
     if(p.copyOutput)
         copyfile(MD.outputDirectory_,MDAnalysisPath);

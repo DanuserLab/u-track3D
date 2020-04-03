@@ -2,6 +2,7 @@ classdef DynROI < hgsetget & matlab.mixin.Copyable & handle
 
     properties (SetAccess = public, GetAccess = public)
         defaultRef; % If the ROI if 1D or 2D, it will generate a default frame of reference. 
+        swapDynROIMDFile;
     end
     methods
     function obj = setDefaultRef(obj,ref)
@@ -171,9 +172,11 @@ classdef DynROI < hgsetget & matlab.mixin.Copyable & handle
         MDout.sanityCheck(); % the usual fucking performance killer...
         MDout.save();
         MDFile=[p.outputDir filesep 'analysis' filesep 'movieData.mat'];
+        obj.swapDynROIMDFile=MDFile;
     end
     
     function [subVol,minCoord,maxCoord] = getSubVol(obj,vol,ZXRatio,frameIdx)
+
         % The intrinsic coordinate values (x,y,z) of the center point of any
         % pixel are identical to the values of the column, row, and plane
         % subscripts for that pixel. For example, the center point of the

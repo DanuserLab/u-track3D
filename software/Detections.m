@@ -672,10 +672,11 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
                     det.addprop('rho');          
                 catch
                 end
+                if(~isempty(det.xCoord))
                 [det.azimuth,det.elevation,det.rho]=cart2sph(det.xCoord(:,1), ... 
                                                     det.yCoord(:,1), ...
                                                     det.zCoord(:,1));
-    
+                end
             end    
         end
 

@@ -222,8 +222,8 @@ for i = 1:numel(p.ChannelIndex)
             ||strcmp(detP.algorithmType,'pointSourceAutoSigmaMixture') ...
             ||strcmp(detP.algorithmType,'pointSourceAutoSigmaLM') ...
             ||strcmp(detP.algorithmType,'pointSourceAutoSigmaFitSig') ...
-            ||strcmp(detP.algorithmType,'pSAutoSigmaWatershed')) ...
-            %&&(isempty(detP.filterSigma))
+            ||strcmp(detP.algorithmType,'pSAutoSigmaWatershed') ...
+            &&(isempty(detP.filterSigma)))
         volList=[];
         for fIdx=1:length(processFrames)
             volList=[volList {double(movieData.getChannel(iChan).loadStack(fIdx))}];
@@ -234,7 +234,6 @@ for i = 1:numel(p.ChannelIndex)
         sigmasPSF = detP.filterSigma;
     end
 
-   
     parfor frameIdx = 1:length(processFrames)    
                 
         timePoint = processFrames(frameIdx);
@@ -247,35 +246,15 @@ for i = 1:numel(p.ChannelIndex)
         debugVol=[];
         energyMap=[];
 
-        %% build cuboid mask from dynROI
-        ROI=[];
-        maskMinY=[];maskMinX=[];maskMinZ=[];
-        maskMaxX=[];maskMaxY=[];maskMaxZ=[];
-        if(~isempty(detP.processBuildDynROI))
-            tmp=detP.processBuildDynROI.loadFileOrCache(); % try initDynROIs
-            dynROICell=tmp{1}.dynROICell;
-            dynROI=dynROICell{1};
-            [BBmin,BBmax]=dynROI.getBoundingBox();
-            maskMinX=BBmin(2); maskMinY=BBmin(1); maskMinZ=ceil(BBmin(3)/ZXRatio); 
-            maskMaxX=BBmax(2); maskMaxY=BBmax(1); maskMaxZ=floor(BBmax(3)/ZXRatio); 
-        end
 
+        % If a DynROI is specified and this dynROI has not been swapped, 
+        % crop the associated volume (non-isotropic)
+        minCoord=[];
         if(~isempty(detP.processBuildDynROI)&&~(detP.processBuildDynROI.isSwaped()))
-            % ROI=false(size(vol));
-            % ROI(max(maskMinX,1):min(maskMaxX,end),max(1,maskMinY):min(end,maskMaxY),max(maskMinZ,1):min(end,maskMaxZ))=true;
-            % disp('getBoundingBox');
-            % [maskMinX,maskMinY,maskMinZ]=ind2sub(size(ROI), find(ROI,1));
-            % [maskMaxX,maskMaxY,maskMaxZ]=ind2sub(size(ROI), find(ROI,1,'last'));
-            % tmp = nan(1+[maskMaxX,maskMaxY,maskMaxZ]-[maskMinX,maskMinY,maskMinZ]);
-            % size(tmp)
-            % tmp(:) = vol(ROI);
-            % origVol=vol;
-            % vol = tmp;
-
             tmp=detP.processBuildDynROI.loadFileOrCache(); % try initDynROIs
             dynROICell=tmp{1}.dynROICell;
             dynROI=dynROICell{1};
-            [vol,ROI]=dynROI.cropBoundingVol(vol,ZXRatio);
+            [vol,ROI,minCoord]=dynROI.cropBoundingVol(vol,ZXRatio);
         end
 
 
@@ -295,7 +274,6 @@ for i = 1:numel(p.ChannelIndex)
         else
             detP_pf.Mask = [];
         end
-
        
         switch detP.algorithmType
             case {'pointSourceLM',...
@@ -429,54 +407,48 @@ for i = 1:numel(p.ChannelIndex)
         end
 
         % rawMovieInfo=movieInfo;
-
+        labDet=Detections().initFromPointCloud(lab,lab,1);
+        debugDet=Detections();
+        if(~isempty(energyMap))
+            debugDet=Detections().initFromPointCloud(energyMap,energyMap,1);
+        end
         if(~isempty(detP.processBuildDynROI))
             if(~isempty(movieInfo(frameIdx).xCoord))
-            movieInfo(frameIdx).xCoord(:,1)=movieInfo(frameIdx).xCoord(:,1)+maskMinY-1;
-            movieInfo(frameIdx).yCoord(:,1)=movieInfo(frameIdx).yCoord(:,1)+maskMinX-1;
-            movieInfo(frameIdx).zCoord(:,1)=movieInfo(frameIdx).zCoord(:,1)+maskMinZ-1;
+                movieInfo(frameIdx).xCoord(:,1)=movieInfo(frameIdx).xCoord(:,1)+minCoord(1)-1;
+                movieInfo(frameIdx).yCoord(:,1)=movieInfo(frameIdx).yCoord(:,1)+minCoord(2)-1;
+                movieInfo(frameIdx).zCoord(:,1)=movieInfo(frameIdx).zCoord(:,1)+minCoord(3)-1;
             end
             if(~isempty(detP.samplePos))  
-                samplePos.addOffset(maskMinY-1,maskMinX-1,maskMinZ-1);
+                samplePos.addOffset(minCoord(1)-1,minCoord(2)-1,minCoord(3)-1);
             end
             
         end  
 
+        if(~isempty(detP.processBuildDynROI))
+            labDet.addOffset(minCoord(1)-1,minCoord(2)-1,minCoord(3)-1);
+        end
+
+        if(~isempty(energyMap))
+            if(~isempty(detP.processBuildDynROI))
+                debugDet.addOffset(minCoord(1)-1,minCoord(2)-1,minCoord(3)-1);
+            end
+        end
+
+        if isfield(p, 'isoCoord') && p.isoCoord && (~isempty(movieInfo(frameIdx).zCoord))
+                    movieInfo(frameIdx).zCoord(:,1)=movieInfo(frameIdx).zCoord(:,1)*ZXRatio;
+                    labDet.zCoord(:,1)=labDet.zCoord(:,1)*ZXRatio;
+                    if(~isempty(debugDet))
+                        if(~isempty(debugDet.zCoord))
+                            debugDet.zCoord(:,1)=debugDet.zCoord(:,1)*ZXRatio;
+                        end
+                    end
+        end
 
         if(~isempty(detP.saveMaskFilePattern))
             stackWrite(uint16(lab),sprintfPath(detP.saveMaskFilePattern,frameIdx));
-
-        end
-        labDet=Detections().initFromPointCloud(lab,lab,1);
-        if(~isempty(detP.processBuildDynROI))
-            labDet.addOffset(maskMinY-1,+maskMinX-1,maskMinZ-1);
         end
 
-        debugDet=Detections();
-        if(~isempty(energyMap))
-            debugDet=Detections().initFromPointCloud(energyMap,energyMap,1);
-            if(~isempty(detP.processBuildDynROI))
-                debugDet.addOffset(maskMinY-1,maskMinX-1,maskMinZ-1);
-            end
-        end
-
-   
-        if isfield(p, 'isoCoord') && p.isoCoord && (~isempty(movieInfo(frameIdx).zCoord))
-            movieInfo(frameIdx).zCoord(:,1)=movieInfo(frameIdx).zCoord(:,1)*ZXRatio;
-            labDet.zCoord(:,1)=labDet.zCoord(:,1)*ZXRatio;
-            if(~isempty(debugDet))
-                if(~isempty(debugDet.zCoord))
-                    debugDet.zCoord(:,1)=debugDet.zCoord(:,1)*ZXRatio;
-                end
-            end
-        end
-        % MDout=dynROI.swapRawBoundingBox(movieData,'testROI')
-        % croppedVol=vol;
-        % vol = double(imLoader{iChan}(timePoint));
-        % testDynROIOverlay(dynROI,croppedVol,vol,rawMovieInfo,movieInfo,frameIdx,ZXRatio);
-        
         debugPos(frameIdx)=debugDet;
-
         labelSegPos(frameIdx)=labDet;
 
     end %%%% end parfor (frame loop)

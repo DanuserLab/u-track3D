@@ -76,12 +76,24 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
             ip.addParameter('output','movieInfo',@ischar);
             ip.addParameter('show',true,@islogical);
             ip.addParameter('useDetection',false,@islogical);
+            ip.addParameter('plotGaps',false,@islogical);
+            ip.addParameter('gapColormap',[],@isnumeric);
+            ip.addParameter('gapRenderingMethod','FilledCircle',@ischar)
+            ip.addParameter('gapRadius',1.5,@isnumeric);
+            ip.addParameter('gapOpacity',0.5,@isnumeric);
             ip.addParameter('tracks',[],@(x) isa(x,'Tracks')); % side load tracks for convenience...
-            ip.addParameter('trackLabel','depth',@(x) isnumeric(x)||any(strcmpi(x, {'ID', 'lifetime','depth'})));
+            ip.addParameter('trackLabel','depth',@(x) isnumeric(x)||any(strcmpi(x, { ... 
+                                    'ID', ...
+                                    'lifetime', ...
+                                    'depth', ...
+                                    'speed', ...
+                                    'segmentTrackability', ...
+                                    'meanTrackability'})));
             ip.addParameter('showTrackability',0);
+            ip.addParameter('showNumber',false);
+            ip.addParameter('processFrames',[]);
             ip.parse(iChan,displayProjsProcess,varargin{:})
             p=ip.Results;
-
 
             fParam=obj.funParams_;
 
@@ -117,6 +129,16 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
                     trackLabel=1:numel(tracks);
                 case 'depth'
                     trackLabel=arrayfun(@(t) nanmean(t.z),tracks);
+                case 'speed'
+                    trackLabel=arrayfun(@(t) ((t.x(2:end)-t.x(1:end-1)).^2+(t.y(2:end)-t.y(1:end-1)).^2+(t.z(2:end)-t.z(1:end-1)).^2).^0.5,tracks,'unif',0);
+                case 'segmentTrackability'
+                    tmp=load(obj.outFilePaths_{3,iChan}); 
+                    trackabilityData=tmp.trackabilityData;
+                    trackLabel=trackabilityData.segTrackability;
+                case 'meanTrackability'
+                    tmp=load(obj.outFilePaths_{3,iChan}); 
+                    trackabilityData=tmp.trackabilityData;
+                    trackLabel=cellfun(@(t) nanmean(t),trackabilityData.segTrackability);
                 otherwise
                     error('Undefined label');
             end
@@ -124,19 +146,20 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
                 trackLabel=p.trackLabel;
             end
 
-            if(p.useDetection||p.showTrackability==1)
-                if(p.showTrackability==1)
-                    trackDet=Detections().setFromTracksIndx(tracks);
+            trackDet=[];
+            if(p.showTrackability==1)
                     tmp=load(obj.outFilePaths_{3,iChan}); 
                     trackabilityData=tmp.trackabilityData;
+                    trackDet=trackabilityData.predExpectation;
                     detTrackability=trackabilityData.trackabilityCost;
                     radii=cellfun(@(t) 1+3*(1-t),detTrackability,'unif',0);
                     trackDetLabel=detTrackability;
-                else
-                    [trackDet,lifetimeLabels,trackIndices]=Detections().getTracksCoord(tracks);
-                    trackDetLabel=cellfun(@(i) trackLabel(i),trackIndices,'unif',0);
-                    radii=2;
-                end
+            end
+
+            if(p.useDetection)
+                [trackDet,lifetimeLabels,trackIndices]=Detections().getTracksCoord(tracks);
+                trackDetLabel=cellfun(@(i) trackLabel(i),trackIndices,'unif',0);
+                radii=2;
             end
 
             if(p.showTrackability==2)
@@ -149,14 +172,24 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
 
             for rIdx=1:numel(overlayCell)
                 myColormap=256*parula(256);
+                tracksCopy=tracks.copy();
                 if(p.useDetection||p.showTrackability>0)
                     overlayProjDetectionMovie(displayProjs{rIdx},'detections',trackDet, 'process',overlayCell{rIdx}, ... 
-                        'renderingMethod','FilledCircle','colorLabel',trackDetLabel,'cumulative',false,'colormap',myColormap,'radius',radii,'detectionBorderDisplay',1.5,varargin{:}); 
+                        'renderingMethod','FilledCircle','colorLabel',trackDetLabel,'cumulative',false, ...
+                        'colormap',myColormap,'radius',radii,'detectionBorderDisplay',1.5,varargin{:}); 
                 else
                     overlayProjTracksMovie(displayProjs{rIdx},'tracks',tracks,'dragonTail',10, ... 
                         'colormap',myColormap,'colorLabel',trackLabel, ... 
                         'process',overlayCell{rIdx},varargin{:}); 
                 end
+                if(p.plotGaps)
+                   overlayProjTrackGapMovie(overlayCell{rIdx},'tracks',tracksCopy,  ... 
+                                        'process',overlayCell{rIdx},'showNumber',false, ...
+                                        'renderingMethod',p.gapRenderingMethod,'radius',p.gapRadius, ...
+                                        'opacity',p.gapOpacity,'colormap',p.gapColormap,'processFrames',p.processFrames);
+                end
+
+           
             end
 
             if(p.show)

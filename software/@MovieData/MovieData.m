@@ -538,7 +538,7 @@ classdef  MovieData < MovieObject & matlab.mixin.Heterogeneous
             for cIdx=1:numel(chPath)
                     chPath{cIdx} =[obj.channels_(cIdx).channelPath_ filesep '*'];
             end
-            fileCell=cellfun(@(s) [s ' '],chPath,'unif',0);
+            fileCell=cellfun(@(s) ['"' s '" '],chPath,'unif',0);
             system(['quickMIPMovie ' fileCell{:}]);
         end
 

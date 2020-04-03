@@ -93,8 +93,8 @@ ip.parse(varargin{:});
           trdetections(tIdx).xCoord=detections(tIdx).zCoord;
           trdetections(tIdx).yCoord=detections(tIdx).yCoord;
       end
-    ZLimit=[minZBorder maxZBorder]
-    imageSize=size(ZYProj)
+    ZLimit=[minZBorder maxZBorder];
+    imageSize=size(ZYProj);
     tracksZY=detectionBinaryOverlay(ZYProj,[minZBorder maxZBorder],[minYBorder maxYBorder],trdetections,colorIndx,myColormap,varargin{:}, ...
                                     'radius',radius,'positionsLabel',positionsLabel);
   else
