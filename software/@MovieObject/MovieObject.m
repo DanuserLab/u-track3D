@@ -610,8 +610,11 @@ classdef  MovieObject < hgsetget
                         elseif isa(obj,'MovieList')
                             type='movie list';
                             components='movies';
+                        elseif isa(obj,'ImageData')
+                            type='image';
+                            components='imFolders'; 
                         else
-                            error('Non supported movie object');
+                            error('Non supported movie object or image data object');
                         end
                         relocateMsg=sprintf(['The %s and its analysis will be relocated from \n%s to \n%s.\n'...
                             'Should I relocate its %s as well?'],type,oldPath,newPath,components);
