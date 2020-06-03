@@ -24,7 +24,7 @@ classdef NewUTrack3DPackage < Package
     
     methods
         function obj = NewUTrack3DPackage(owner, varargin)
-        	% Construntor of class NewUTrack3DPackage
+        	% Constructor of class NewUTrack3DPackage
             if nargin == 0
                 super_args = {};
             else
