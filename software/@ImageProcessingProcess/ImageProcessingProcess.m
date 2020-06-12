@@ -56,7 +56,11 @@ classdef ImageProcessingProcess < Process
                 obj.inFilePaths_ = inImagePaths;
             else
                 %Default is to use raw images as input.
-                obj.inFilePaths_ = owner.getChannelPaths;               
+                if isa(owner, 'ImageData')
+                    obj.inFilePaths_ = owner.getImFolderPaths;
+                else
+                    obj.inFilePaths_ = owner.getChannelPaths;   
+                end
             end                        
             if nargin > 5               
                 if ~isempty(outImagePaths) && numel(outImagePaths) ... 
@@ -65,7 +69,11 @@ classdef ImageProcessingProcess < Process
                 end
                 obj.outFilePaths_ = outImagePaths;              
             else
-                obj.outFilePaths_ = cell(1,numel(owner.channels_));               
+                if isa(owner, 'ImageData')
+                    obj.outFilePaths_ = cell(1,numel(owner.imFolders_));
+                else
+                    obj.outFilePaths_ = cell(1,numel(owner.channels_));
+                end
             end
             
         end
