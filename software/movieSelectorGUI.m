@@ -90,6 +90,7 @@ ip.addRequired('handles',@isstruct);
 ip.addParameter('packageName','',@ischar);
 ip.addParameter('MD', MovieData.empty(1,0) ,@(x) isempty(x) || isa(x,'MovieData'));
 ip.addParameter('ML', MovieList.empty(1,0), @(x) isempty(x) || isa(x,'MovieList'));
+ip.addParameter('ImD', ImageData.empty(1,0) ,@(x) isempty(x) || isa(x,'ImageData'));
 ip.addParameter('cluster',[],@(x) isempty(x) || isa(x,'parallel.Cluster'));
 ip.parse(hObject,eventdata,handles,varargin{:});
 
@@ -103,6 +104,7 @@ handles.output = hObject;
 % other user data set-up
 userData.MD = MovieData.empty(1,0);
 userData.ML = MovieList.empty(1,0);
+userData.ImD = ImageData.empty(1,0);
 userData.userDir = pwd;
 userData.newFig=-1;
 userData.msgboxGUI=-1;
@@ -160,6 +162,11 @@ if ~isempty(ip.Results.MD)
     userData.MD = horzcat(userData.MD,ip.Results.MD);
 end
 
+% Populate images to analyze
+if ~isempty(ip.Results.ImD)
+    userData.ImD = horzcat(userData.ImD,ip.Results.ImD);
+end
+
 % Set uTrackParCluster
 if(~isempty(ip.Results.cluster))
     uTrackParCluster(ip.Results.cluster);
@@ -172,6 +179,10 @@ userData.MD = userData.MD(sort(index));
 % Filter movie lists to get a unique list
 [~,index] = unique(arrayfun(@getFullPath,userData.ML,'Unif',0));
 userData.ML = userData.ML(sort(index));
+
+% Filter images to get a unique list
+[~,index] = unique(arrayfun(@getFullPath,userData.ImD,'Unif',0));
+userData.ImD = userData.ImD(sort(index));
 
 supermap(1,:) = get(hObject,'color');
 
@@ -344,16 +355,29 @@ if any(strcmp([pathname filename], moviePaths))
 end
 
 try
+    ImDOrMD = load([pathname filename]);
     % Add option for user to choose to do sanityCheck or not (updated 2019-04)
     if get(handles.checkbox_sanityCheckMD, 'Value') == 1
-        MD = MovieData.load([pathname filename]);
+        if isa(ImDOrMD.obj, 'MovieData')
+            MD = MovieData.load([pathname filename]);
+        elseif isa(ImDOrMD.obj, 'ImageData')
+            ImD = ImageData.load([pathname filename]);
+        end
     else
-        MD = MovieData.loadMatFile([pathname filename]);
+        if isa(ImDOrMD.obj, 'MovieData')
+            MD = MovieData.loadMatFile([pathname filename]);
+        elseif isa(ImDOrMD.obj, 'ImageData')
+            ImD = ImageData.loadMatFile([pathname filename]);
+        end
     end
-    userData.MD = horzcat(userData.MD, MD);
+    if isa(ImDOrMD.obj, 'MovieData')
+        userData.MD = horzcat(userData.MD, MD);
+    elseif isa(ImDOrMD.obj, 'ImageData')
+        userData.ImD = horzcat(userData.ImD, ImD);
+    end
 catch ME
-    msg = sprintf('Movie: %s\n\nError: %s\n\nMovie is not successfully loaded. Please refer to movie detail and adjust your data.', [pathname filename],ME.message);
-    errordlg(msg, 'Movie error','modal');
+    msg = sprintf('Movie or Image: %s\n\nError: %s\n\nMovie/Image is not successfully loaded. Please refer to movie/image detail and adjust your data.', [pathname filename],ME.message);
+    errordlg(msg, 'Movie/Image error','modal');
     return
 end
 
@@ -541,7 +565,25 @@ function refreshDisplay(hObject, eventdata, handles)
 
 userData = get(handles.figure1,'UserData');
 
-% Display Movie information
+% Display Movie or Images information
+if ~isempty(userData.ImD)
+    if ~isempty(userData.MD)
+        msg = sprintf('Both movie and images are loaded! Please only load one type of data!');
+        errordlg(msg, 'Movie/Image error','modal');
+        return
+    else
+        imagePaths = arrayfun(@getFullPath,userData.ImD,'Unif',false);
+        nImageData= numel(userData.ImD);
+        iImageData = get(handles.listbox_movie, 'Value');
+        if isempty(userData.ImD),
+            iImageData=0;
+        else
+            iImageData=max(1,min(iImageData,nImageData));
+        end
+        set(handles.listbox_movie,'String',imagePaths,'Value',iImageData);
+        set(handles.text_movies, 'String', sprintf('%g/%g movie(s)',iImageData,nImageData))
+    end
+else
 moviePaths = arrayfun(@getFullPath,userData.MD,'Unif',false);
 nMovies= numel(userData.MD);
 iMovie = get(handles.listbox_movie, 'Value');
@@ -552,6 +594,7 @@ else
 end
 set(handles.listbox_movie,'String',moviePaths,'Value',iMovie);
 set(handles.text_movies, 'String', sprintf('%g/%g movie(s)',iMovie,nMovies))
+end
 
 % Display list information
 listPaths = arrayfun(@getFullPath,userData.ML,'Unif',false);
