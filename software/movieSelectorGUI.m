@@ -221,6 +221,7 @@ packageList = {
     'Morphology3DPackage'
     'XcorrFluctuationPackage'
     'NewUTrack3DPackage'
+    'FishATLASPackage'
     };
 validPackage = cellfun(@(x) exist(x,'class')==8,packageList);
 packageList = packageList(validPackage);
@@ -581,7 +582,7 @@ if ~isempty(userData.ImD)
             iImageData=max(1,min(iImageData,nImageData));
         end
         set(handles.listbox_movie,'String',imagePaths,'Value',iImageData);
-        set(handles.text_movies, 'String', sprintf('%g/%g movie(s)',iImageData,nImageData))
+        set(handles.text_movies, 'String', sprintf('%g/%g movie(s)/images',iImageData,nImageData))
     end
 else
 moviePaths = arrayfun(@getFullPath,userData.MD,'Unif',false);
@@ -593,7 +594,7 @@ else
     iMovie=max(1,min(iMovie,nMovies));
 end
 set(handles.listbox_movie,'String',moviePaths,'Value',iMovie);
-set(handles.text_movies, 'String', sprintf('%g/%g movie(s)',iMovie,nMovies))
+set(handles.text_movies, 'String', sprintf('%g/%g movie(s)/images',iMovie,nMovies))
 end
 
 % Display list information
