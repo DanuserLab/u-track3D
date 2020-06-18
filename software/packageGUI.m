@@ -89,7 +89,11 @@ if isfield(userData, 'overviewFig') && ishandle(userData.overviewFig)
     delete(userData.overviewFig)
 end
 
-userData.overviewFig = movieDataGUI(userData.MD(userData.id));
+if ~isempty(userData.MD)
+    userData.overviewFig = movieDataGUI(userData.MD(userData.id));
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    userData.overviewFig = movieDataGUI(userData.ImD(userData.id));
+end
 set(handles.figure1, 'UserData', userData);
 
 % --- Executes on Save button press or File>Save
