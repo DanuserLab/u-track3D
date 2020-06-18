@@ -53,6 +53,9 @@ if ~isempty(userData.MD), field='MD'; else field = 'ML'; end
 if isa(userData.crtPackage, 'XcorrFluctuationPackage')
     field = 'ML';
 end
+if isa(userData.crtPackage, 'FishATLASPackage')
+    field = 'ImD';
+end
 
 if isa(userData.crtPackage, 'Morphology3DPackage')
     para_menu_handles = findall(0,'-regexp','Tag','menu_parallel$');

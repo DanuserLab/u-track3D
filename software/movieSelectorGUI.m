@@ -258,9 +258,12 @@ class = eval([selectedPackage '.getMovieClass()']);
 if strcmp(class, 'MovieList')
     type = 'movie list';
     field = 'ML';
-else
+elseif strcmp(class, 'MovieData')
     type = 'movie';
     field = 'MD'; 
+elseif strcmp(class, 'ImageData')
+    type = 'imageData';
+    field = 'ImD'; 
 end
   
 if isempty(userData.(field))
@@ -270,7 +273,7 @@ end
 
 close(handles.figure1);
 packageGUI(selectedPackage,userData.(field),...
-    'MD', userData.MD, 'ML', userData.ML, 'cluster', uTrackParCluster);
+    'MD', userData.MD, 'ML', userData.ML, 'ImD', userData.ImD, 'cluster', uTrackParCluster);
 
 % --- Executes on selection change in listbox_movie.
 function listbox_movie_Callback(hObject, eventdata, handles)

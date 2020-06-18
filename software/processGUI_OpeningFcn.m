@@ -6,7 +6,8 @@ function processGUI_OpeningFcn(hObject, eventdata, handles, string,varargin)
 %       userData.handles_main - 'handles' of main figure
 %       userData.procID - The ID of process in the current package
 %       userData.MD - current MovieData array
-%       userData.MD - current MovieList array
+%       userData.ML - current MovieList array
+%       userData.ImD - current ImageData array
 %       userData.crtProc - current process
 %       userData.crtPackage - current package
 %       userData.crtProcClassName - current process class
@@ -36,6 +37,9 @@ function processGUI_OpeningFcn(hObject, eventdata, handles, string,varargin)
 % along with NewUtrack3DPackage.  If not, see <http://www.gnu.org/licenses/>.
 % 
 % 
+
+% Add ImageData compatibility
+% Updated by Qiongjing (Jenny) Zou, Jun 2020
 
 % Check input
 % The mainFig and procID should always be present
@@ -72,6 +76,8 @@ userData_main = get(userData.mainFig, 'UserData');
 userData.crtPackage = userData_main.crtPackage;
 if strcmp(userData.crtPackage.getMovieClass(), 'MovieData')
     userData.MD = userData_main.MD(userData_main.id);
+elseif strcmp(userData.crtPackage.getMovieClass(), 'ImageData')
+    userData.ImD = userData_main.ImD(userData_main.id);
 else
     userData.ML = userData_main.ML(userData_main.id);
 end
@@ -115,6 +121,9 @@ if isempty(userData.crtProc)
         movieClass = userData.crtPackage.getMovieClass();
         if strcmp(movieClass,'MovieData')
             userData.crtProc = userData.procConstr(userData.MD, ...
+                userData.crtPackage.outputDirectory_);
+        elseif strcmp(movieClass,'ImageData')
+            userData.crtProc = userData.procConstr(userData.ImD, ...
                 userData.crtPackage.outputDirectory_);
         else
             userData.crtProc = userData.procConstr(userData.ML, ...
