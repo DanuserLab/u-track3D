@@ -23,6 +23,9 @@ function processGUI_ApplyFcn(hObject, eventdata, handles,funParams,varargin)
 % 
 % 
 
+% Add ImageData compatibility
+% Updated by Qiongjing (Jenny) Zou, Jun 2020
+
 % Check input
 ip = inputParser;
 ip.addRequired('hObject',@ishandle);
@@ -50,6 +53,8 @@ if isfield(userData,'MD'),
     field = 'MD';
 elseif isfield(userData,'ML');
     field = 'ML';
+elseif isfield(userData,'ImD');
+    field = 'ImD';
 else
     error('Missing movie');
 end
