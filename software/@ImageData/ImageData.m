@@ -232,6 +232,19 @@ classdef  ImageData < MovieObject
             end
         end
 
+        %% isHCS and isMock and is3D are called in imageDataViewer, even ImD or ImFolder does not have such properties
+        function status = isHCS(obj)
+            % Check if the ImageData is linked to an HCS (High Content Screening) file
+            status = false;
+        end
+        
+        function status = isMock(obj)
+            status = false;
+        end
+
+        function status = is3D(obj)
+            status = false;
+        end
     end
     
     methods(Static)

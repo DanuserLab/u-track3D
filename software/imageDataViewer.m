@@ -59,8 +59,8 @@ function mainFig = imageDataViewer(MO,varargin)
 % 
 
 % Adapted from movieViewer
-% Changed some 'MovieData' to 'ImageData', channels_ to imFolders_, nFrames_ to imFolders_(1).nImages_
-% Commented out many userData.MO.isHCS() or userData.MO.isMock() lines.
+% Changed necessary 'MovieData' to 'ImageData', channels_ to imFolders_, nFrames_ to imFolders_(1).nImages_
+% QZ TODO nFrames_ should be Max(imFolders_(i).nImages_).
 % by Qiongjing (Jenny) Zou, Jun 2020
 
 % Check input
@@ -108,7 +108,7 @@ else
     procId=ip.Results.procId;
 end
 % Check existence of viewer interface
-if isfield('MO', 'isMock') && ~MO.isMock()
+if isfield('MO', 'isMock') && ~MO.isMock() % QZ 'MO' is not a struc, should not use isfield?
     h=findobj(0,'Name','Viewer');
     h2 = findobj('Name', 'hcsview');
     if ~isempty(h), delete(h); end
@@ -155,7 +155,7 @@ createMovieBox= @(panel,i,j,pos,name,varargin) uicontrol(panel,'Style','checkbox
     'Position',[40 pos 200 25],'Tag',['checkbox_process' num2str(i) '_output'...
     num2str(j)],'String',[' ' name],varargin{:});
 
-%% Image panel creation
+%% Image panel creation % QZ good now, check out checkChannelOutput
 if isa(userData.MO,'ImageData')
     imagePanel = uibuttongroup(mainFig,'Position',[0 0 1/2 1],...
         'Title','Image','BackgroundColor',get(0,'defaultUicontrolBackgroundColor'),...
@@ -201,13 +201,13 @@ if isa(userData.MO,'ImageData')
         'HorizontalAlignment','left','FontWeight','bold');
     arrayfun(@(i) uicontrol(imagePanel,'Style','checkbox',...
         'Position',[200+30*i hPosition 20 20],...
-        'Tag',['checkbox_channel' num2str(i)],'Value',i<4,...
+        'Tag',['checkbox_channel' num2str(i)],'Value',1,...
         'Callback',@(h,event) redrawChannel(h,guidata(h))),...
         1:numel(userData.MO.imFolders_));
     
     hPosition=hPosition+20;
     uicontrol(imagePanel,'Style','text','Position',[120 hPosition 100 20],...
-        'Tag','text_channels','String','Channels');
+        'Tag','text_channels','String','ImFolders');
     arrayfun(@(i) uicontrol(imagePanel,'Style','text',...
         'Position',[200+30*i hPosition 20 20],...
         'Tag',['text_channel' num2str(i)],'String',i),...
@@ -216,7 +216,7 @@ else
     imagePanel=-1;
 end
 
-%% Overlay panel creation
+%% Overlay panel creation % QZ I do not need this
 if ~isempty(overlayProc)
     overlayPanel = uipanel(mainFig,'Position',[1/2 0 1/2 1],...
         'Title','Overlay','BackgroundColor',get(0,'defaultUicontrolBackgroundColor'),...
@@ -266,7 +266,7 @@ else
     overlayPanel=-1;
 end
 
-%% Get image/overlay panel size and resize them
+%% Get image/overlay panel size and resize them % QZ good now
 imagePanelSize = getPanelSize(imagePanel);
 overlayPanelSize = getPanelSize(overlayPanel);
 panelsLength = max(500,imagePanelSize(1)+overlayPanelSize(1));
@@ -284,7 +284,7 @@ if ishandle(overlayPanel)
 end
 
 
-%% Create movie panel
+%% Create movie panel % QZ good now
 moviePanel = uipanel(mainFig,...
     'Title','','BackgroundColor',get(0,'defaultUicontrolBackgroundColor'),...
     'Units','pixels','Tag','uipanel_movie','BorderType','none');
@@ -296,24 +296,24 @@ if isa(userData.MO,'ImageData')
  
     % Create controls for scrollling through the movie if regular moviedata
     MO = userData.MO;
-%     if isa(MO,'ImageData') && ~MO.isHCS()
-    if isa(MO,'ImageData')
-    uicontrol(moviePanel, 'Style', 'togglebutton','String', 'Run movie',...
+    if isa(MO,'ImageData') && ~MO.isHCS()
+    uicontrol(moviePanel, 'Style', 'togglebutton','String', 'See images',...
         'Position', [10 hPosition 100 20],'Callback',@(h,event) runMovie(h,guidata(h)));
-    
-    % Create control button for exporting figures and movie (cf Francois' GUI)
 
-    uicontrol(moviePanel, 'Style', 'checkbox','Tag','checkbox_saveFrames',...
-        'Value',0,'String', 'Save frames','Position', [150 hPosition 100 20]);
-    uicontrol(moviePanel, 'Style', 'checkbox','Tag','checkbox_saveMovie',...
-        'Value',0,'String', 'Save movie','Position', [250 hPosition 100 20]);
-    uicontrol(moviePanel, 'Style', 'popupmenu','Tag','popupmenu_movieFormat',...
-        'Value',1,'String', {'MOV';'AVI'},'Position', [350 hPosition 100 20]);    
+% QZ comment out below movie exporting features
+%     % Create control button for exporting figures and movie (cf Francois' GUI)
+% 
+%     uicontrol(moviePanel, 'Style', 'checkbox','Tag','checkbox_saveFrames',...
+%         'Value',0,'String', 'Save frames','Position', [150 hPosition 100 20]);
+%     uicontrol(moviePanel, 'Style', 'checkbox','Tag','checkbox_saveMovie',...
+%         'Value',0,'String', 'Save movie','Position', [250 hPosition 100 20]);
+%     uicontrol(moviePanel, 'Style', 'popupmenu','Tag','popupmenu_movieFormat',...
+%         'Value',1,'String', {'MOV';'AVI'},'Position', [350 hPosition 100 20]);    
         
         
     hPosition = hPosition+30;
     uicontrol(moviePanel,'Style','text','Position',[10 hPosition 50 15],...
-        'String','Frame','Tag','text_frame','HorizontalAlignment','left');
+        'String','NO.','Tag','text_frame','HorizontalAlignment','left');
     uicontrol(moviePanel,'Style','edit','Position',[70 hPosition 30 20],...
         'String','1','Tag','edit_frame','BackgroundColor','white',...
         'HorizontalAlignment','left',...
@@ -489,8 +489,8 @@ if isa(userData.MO,'ImageData')
     end
 end
 % Create movie location edit box
-uicontrol(moviePanel,'Style','text','Position',[10 hPosition 40 20],...
-    'String','Movie','Tag','text_movie');
+uicontrol(moviePanel,'Style','text','Position',[3 hPosition 60 20],...
+    'String','ImgData','Tag','text_movie');
 
 % Create popupmenu if input is a ImageList, else  list the movie path
 if isa(ip.Results.MO,'ImageList')
@@ -528,7 +528,7 @@ uicontrol(moviePanel,'Style','text','Position',[10 hPosition panelsLength-100 20
 % Get overlay panel size
 moviePanelSize = getPanelSize(moviePanel);
 moviePanelHeight =moviePanelSize(2);
-if isa(MO, 'MovieData')
+if isa(MO, 'MovieData') % QZ I do not need this
     if ~isempty(MO.channels_(1,1).hcsFlags_)
         if max(size(MO.channels_(1,1).hcsFlags_.wellF)) ~= 0
             hcsl = 22*size(MO.channels_(1,1).hcsFlags_.wellF,2)+150;
@@ -541,11 +541,11 @@ if isa(MO, 'MovieData')
     end
 end
 
-    %% Resize panels and figure
+    %% Resize panels and figure % QZ good now
     sz=get(0,'ScreenSize');
     maxWidth = panelsLength+20;
     maxHeight = panelsHeight+moviePanelHeight;
-    if isa(MO, 'MovieData')
+    if isa(MO, 'ImageData')
         if MO.isMock()
             maxHeight = 190;
         end
@@ -567,12 +567,12 @@ userData.redrawOverlaysFcn = @(varargin) redrawOverlays(handles, varargin{:});
 userData.getFigure = @(figName) getFigure(handles, figName);
 set(handles.figure1,'UserData',userData);
 
-% Create options figure
+% Create options figure % QZ I do not need the movieViewerOptions window now.
 if isa(userData.MO, 'MovieData')
     optionsFig = movieViewerOptions(mainFig);
     set(optionsFig, 'Tag', 'optionsFig');
 end
-%% Add additional panel for independent graphs
+%% Add additional panel for independent graphs % QZ I do not need this
 if ~isempty(graphProc)
     graphFig = graphViewer(mainFig, graphProc, graphProcId, intersect(graphProcId,procId));
     set(graphFig, 'Tag', 'graphFig');
@@ -585,33 +585,33 @@ for i=intersect(procId,validProcId)
     set(h,'Value',1);
 end
 
-% if procId was assigned and PointSourceDetectionProcess3DDynROI or TrackingDynROIProcess was selected on Overlay panel,
-% then selected radiobutton on Image panel should be changed from Raw image to BuildDynROIProcess.
-if ~isempty(i) && ~isempty(h) && isequal(h.Style, 'checkbox') && isequal(imagePanel.SelectedObject.String, ' Raw image')
-    switch class(validProc{i})
-        case {'PointSourceDetectionProcess3DDynROI', 'TrackingDynROIProcess'}
-            BuildDynROIProcId = validProcId(cellfun(@(x) isa(x, 'BuildDynROIProcess'),validProc));
-            if ~isempty(BuildDynROIProcId)
-                h2 = findobj(mainFig,'-regexp','Tag',['radiobutton_process' num2str(BuildDynROIProcId)  '_output2.*']);
-                set(h2,'Value',1);
-            else
-                set(h,'Value',0);
-            end
-    end
-end
+% QZ comment out below specific feature for PointSourceDetectionProcess3DDynROI and TrackingDynROIProcess
+% % if procId was assigned and PointSourceDetectionProcess3DDynROI or TrackingDynROIProcess was selected on Overlay panel,
+% % then selected radiobutton on Image panel should be changed from Raw image to BuildDynROIProcess.
+% if ~isempty(i) && ~isempty(h) && isequal(h.Style, 'checkbox') && isequal(imagePanel.SelectedObject.String, ' Raw image')
+%     switch class(validProc{i})
+%         case {'PointSourceDetectionProcess3DDynROI', 'TrackingDynROIProcess'}
+%             BuildDynROIProcId = validProcId(cellfun(@(x) isa(x, 'BuildDynROIProcess'),validProc));
+%             if ~isempty(BuildDynROIProcId)
+%                 h2 = findobj(mainFig,'-regexp','Tag',['radiobutton_process' num2str(BuildDynROIProcId)  '_output2.*']);
+%                 set(h2,'Value',1);
+%             else
+%                 set(h,'Value',0);
+%             end
+%     end
+% end
 
 % Clear cache when initializing movieViewer
 cached.load('-clear');
 
-if isa(MO, 'MovieData')
+if isa(MO, 'ImageData')
     if userData.MO.isMock()
         redrawScene(handles.figure1, handles);
     end
 end
 
 % Update the image and overlays
-% if isa(userData.MO,'ImageData') && ~userData.MO.isHCS()
-if isa(userData.MO,'ImageData')
+if isa(userData.MO,'ImageData') && ~userData.MO.isHCS()
     redrawScene(handles.figure1, handles);
     addMovieViewerKeyboardShortcuts(mainFig, getFigure(handles,'Movie'));
 end
@@ -807,28 +807,23 @@ set(hObject,'String', 'Show 3D', 'Value', 0);
 function redrawScene(hObject, handles)
 userData = get(handles.figure1, 'UserData');
 % Retrieve the value of the selected image
-% if userData.MO.isHCS()
-%     if userData.MO.isMock()
-%         if size(userData.MO.mockMD_.index,1) == 1;
-%         frameNumber = 1;
-%         else
-%         frameNumber = get(handles.slider_frame,'Value');
-%         end    
-%     else
-%         frameNumber = get(handles.slider_frame,'Value');
-%         if max(size(frameNumber)) ~= 1
-%             frameNumber = frameNumber{1};
-%             if frameNumber == 0;
-%                 frameNumber = 1;
-%             end
-%         end
-%     end
-% elseif strcmp(get(hObject,'Tag'),'edit_frame')
-%     frameNumber = str2double(get(handles.edit_frame, 'String'));
-% else
-%     frameNumber = get(handles.slider_frame, 'Value');
-% end
-if strcmp(get(hObject,'Tag'),'edit_frame')
+if userData.MO.isHCS()
+    if userData.MO.isMock()
+        if size(userData.MO.mockMD_.index,1) == 1;
+        frameNumber = 1;
+        else
+        frameNumber = get(handles.slider_frame,'Value');
+        end    
+    else
+        frameNumber = get(handles.slider_frame,'Value');
+        if max(size(frameNumber)) ~= 1
+            frameNumber = frameNumber{1};
+            if frameNumber == 0;
+                frameNumber = 1;
+            end
+        end
+    end
+elseif strcmp(get(hObject,'Tag'),'edit_frame')
     frameNumber = str2double(get(handles.edit_frame, 'String'));
 else
     frameNumber = get(handles.slider_frame, 'Value');
@@ -845,21 +840,21 @@ frameNumber = min(max(frameNumber,1),userData.MO.imFolders_(1).nImages_);
 % end
     
 % Set the slider and editboxes values
-% if ~userData.MO.isHCS()
+if ~userData.MO.isHCS()
     set(handles.edit_frame,'String',frameNumber);
     set(handles.slider_frame,'Value',frameNumber);
-%     if userData.MO.is3D()
-%         set(handles.edit_depth,'String',ZNr);
-%         set(handles.slider_depth,'Value',ZNr);
-%     end
-% end
-% if userData.MO.isMock() && size(userData.MO.mockMD_.index,1) > 1
-% set(handles.slider_frame,'Value',frameNumber);
-% set(handles.edit_frame,'String',userData.MO.channels_(1,1).getGenericName(userData.MO.channels_(1,1).hcsPlatestack_{frameNumber}, 'site_on'));
-% if userData.MO.isMock() && size(userData.MO.mockMD_.index,1) == 1
-%     set(handles.slider_frame,'Value',1);
-% end
-% end
+    if userData.MO.is3D()
+        set(handles.edit_depth,'String',ZNr);
+        set(handles.slider_depth,'Value',ZNr);
+    end
+end
+if userData.MO.isMock() && size(userData.MO.mockMD_.index,1) > 1
+set(handles.slider_frame,'Value',frameNumber);
+set(handles.edit_frame,'String',userData.MO.channels_(1,1).getGenericName(userData.MO.channels_(1,1).hcsPlatestack_{frameNumber}, 'site_on'));
+if userData.MO.isMock() && size(userData.MO.mockMD_.index,1) == 1
+    set(handles.slider_frame,'Value',1);
+end
+end
 
 % Update the image and overlays
 redrawImage(handles);
