@@ -387,8 +387,13 @@ classdef Process < hgsetget
         end
         
         function hfigure = resultDisplay(obj)
+            if isa(obj.getOwner(), 'ImageData')
+                hfigure = imageDataViewer(obj.getOwner(), ...
+                    find(cellfun(@(x)isequal(x,obj),obj.getOwner().processes_)));
+            else
             hfigure = movieViewer(obj.getOwner(), ...
                 find(cellfun(@(x)isequal(x,obj),obj.getOwner().processes_)));
+            end
         end
         
         function h=draw(obj,iChan,varargin)
