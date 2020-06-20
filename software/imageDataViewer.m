@@ -297,7 +297,7 @@ if isa(userData.MO,'ImageData')
     % Create controls for scrollling through the movie if regular moviedata
     MO = userData.MO;
     if isa(MO,'ImageData') && ~MO.isHCS()
-    uicontrol(moviePanel, 'Style', 'togglebutton','String', 'See images',...
+    uicontrol(moviePanel, 'Style', 'togglebutton','String', 'Run images',...
         'Position', [10 hPosition 100 20],'Callback',@(h,event) runMovie(h,guidata(h)));
 
 % QZ comment out below movie exporting features
@@ -613,7 +613,7 @@ end
 % Update the image and overlays
 if isa(userData.MO,'ImageData') && ~userData.MO.isHCS()
     redrawScene(handles.figure1, handles);
-    addMovieViewerKeyboardShortcuts(mainFig, getFigure(handles,'Movie'));
+    addMovieViewerKeyboardShortcuts(mainFig, getFigure(handles,'Image'));
 end
 
 
@@ -648,7 +648,7 @@ size = [max(P(:,1)+P(:,3))+10 max(P(:,2)+P(:,4))+20];
 function runMovie(hObject,handles)
 
 userData = get(handles.figure1, 'UserData');
-nFrames = userData.MO.nFrames_;
+nFrames = userData.MO.imFolders_(1).nImages_;
 startFrame = get(handles.slider_frame,'Value');
 if startFrame == nFrames, startFrame =1; end;
 if get(hObject,'Value')
@@ -656,36 +656,37 @@ if get(hObject,'Value')
 else
     action = 'Run';
 end
-set(hObject,'String',[action ' movie']);
+set(hObject,'String',[action ' images']);
 
-% Get frame/movies export status
-saveMovie = get(handles.checkbox_saveMovie,'Value');
-saveFrames = get(handles.checkbox_saveFrames,'Value');
-props = get(handles.popupmenu_movieFormat,{'String','Value'});
-movieFormat = props{1}{props{2}};
-
-if saveMovie
-    moviePath = fullfile(userData.MO.outputDirectory_,['Movie.' lower(movieFormat)]);
-end
-
-% Initialize movie output
-if saveMovie && strcmpi(movieFormat,'mov')
-    MakeQTMovie('start',moviePath);
-    MakeQTMovie('quality',.9)
-end
-
-if saveMovie && strcmpi(movieFormat,'avi')
-    movieFrames(1:nFrames) = struct('cdata', [],'colormap', []);
-end
-
-% Initialize frame output
-if saveFrames;
-    fmt = ['%0' num2str(ceil(log10(nFrames))) 'd'];
-    frameName = @(frame) ['frame' num2str(frame, fmt) '.tif'];
-    fpath = [userData.MO.outputDirectory_ filesep 'Frames'];
-    mkClrDir(fpath);
-    fprintf('Generating movie frames:     ');
-end
+% QZ comment out movie exporting features:
+% % Get frame/movies export status
+% saveMovie = get(handles.checkbox_saveMovie,'Value');
+% saveFrames = get(handles.checkbox_saveFrames,'Value');
+% props = get(handles.popupmenu_movieFormat,{'String','Value'});
+% movieFormat = props{1}{props{2}};
+% 
+% if saveMovie
+%     moviePath = fullfile(userData.MO.outputDirectory_,['Movie.' lower(movieFormat)]);
+% end
+% 
+% % Initialize movie output
+% if saveMovie && strcmpi(movieFormat,'mov')
+%     MakeQTMovie('start',moviePath);
+%     MakeQTMovie('quality',.9)
+% end
+% 
+% if saveMovie && strcmpi(movieFormat,'avi')
+%     movieFrames(1:nFrames) = struct('cdata', [],'colormap', []);
+% end
+% 
+% % Initialize frame output
+% if saveFrames;
+%     fmt = ['%0' num2str(ceil(log10(nFrames))) 'd'];
+%     frameName = @(frame) ['frame' num2str(frame, fmt) '.tif'];
+%     fpath = [userData.MO.outputDirectory_ filesep 'Frames'];
+%     mkClrDir(fpath);
+%     fprintf('Generating movie frames:     ');
+% end
 
 for iFrame = startFrame : nFrames
     if ~get(hObject,'Value'), return; end % Handle pushbutton press
@@ -694,25 +695,27 @@ for iFrame = startFrame : nFrames
     drawnow;
     
     % Get current frame for frame/movie export
-    hFig = getFigure(handles,'Movie');
-    if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('addfigure'); end
-    if saveMovie && strcmpi(movieFormat,'avi'), movieFrames(iFrame) = getframe(hFig); end
-    if saveFrames
-        print(hFig, '-dtiff', fullfile(fpath,frameName(iFrame)));
-        fprintf('\b\b\b\b%3d%%', round(100*iFrame/(nFrames)));
-    end
+    hFig = getFigure(handles,'Image');
+% QZ comment out movie exporting features:
+%     if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('addfigure'); end
+%     if saveMovie && strcmpi(movieFormat,'avi'), movieFrames(iFrame) = getframe(hFig); end
+%     if saveFrames
+%         print(hFig, '-dtiff', fullfile(fpath,frameName(iFrame)));
+%         fprintf('\b\b\b\b%3d%%', round(100*iFrame/(nFrames)));
+%     end
 end
 
-% Finish frame/movie creation
-if saveFrames; fprintf('\n'); end
-if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('finish'); end
-
-if saveMovie && strcmpi(movieFormat,'avi') 
-    v = VideoWriter(moviePath);
-    open(v);
-    writeVideo(v, movieFrames);
-    close(v); 
-end
+% QZ comment out movie exporting features:
+% % Finish frame/movie creation
+% if saveFrames; fprintf('\n'); end
+% if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('finish'); end
+% 
+% if saveMovie && strcmpi(movieFormat,'avi') 
+%     v = VideoWriter(moviePath);
+%     open(v);
+%     writeVideo(v, movieFrames);
+%     close(v); 
+% end
 
 % Reset button
 set(hObject,'String', 'Run movie', 'Value', 0);
@@ -780,7 +783,7 @@ for iFrame = startFrame : nPlane
         drawnow;
         
         % Get current frame for frame/movie export
-        hFig = getFigure(handles,'Movie');
+        hFig = getFigure(handles,'Image');
         if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('addfigure'); end
         if saveMovie && strcmpi(movieFormat,'avi'), movieFrames(iFrame) = getframe(hFig); end
         if saveFrames
@@ -893,11 +896,11 @@ if ~isempty(h)
 end
 
 %Create a figure
-if strcmp(figName,'Movie')
+if strcmp(figName,'Image')
     
     sz=get(0,'ScreenSize');
-    nx=userData.MO.imSize_(2);
-    ny=userData.MO.imSize_(1);
+    nx=max(cell2mat(userData.MO.reader.sizeXmax)); % nx=userData.MO.imSize_(2);
+    ny=max(cell2mat(userData.MO.reader.sizeYmax)); % ny=userData.MO.imSize_(1);
     sc = max(1, max(nx/(.9*sz(3)), ny/(.9*sz(4))));
     h = figure('Position',[sz(3)*.2 sz(4)*.2 nx/sc ny/sc],...
         'Name',figName,'NumberTitle','off','Tag','viewerFig',...
@@ -913,8 +916,8 @@ if strcmp(figName,'Movie')
     % set(h,'DefaultLineLineSmoothing','on');
     % set(h,'DefaultPatchLineSmoothing','on');
     
-    axes('Parent',h,'XLim',[0 userData.MO.imSize_(2)],...
-        'YLim',[0 userData.MO.imSize_(1)],'Position',[0.05 0.05 .9 .9]);
+    axes('Parent',h,'XLim',[0 nx],...
+        'YLim',[0 ny],'Position',[0.05 0.05 .9 .9]);
     userData.figures.Movie = h;
     set(handles.figure1,'UserData',userData);
     
@@ -943,7 +946,7 @@ function redrawImage(handles,varargin)
 
 imageTag = get(get(handles.uipanel_image,'SelectedObject'),'Tag');
 % Get the figure handle
-drawFig = getFigure(handles,'Movie');
+drawFig = getFigure(handles,'Image');
 userData=get(handles.figure1,'UserData');
 if userData.MO.isMock() && size(userData.MO.mockMD_.index,1) == 1
     frameNr = 1;
@@ -985,22 +988,23 @@ else
     output = outputList(iOutput).var;
     iChan = str2double(tokens{1}{3});
     if userData.MO.is3D
-        if isa(userData.MO.processes_{procId}, 'BuildDynROIProcess')
-            s = cached.load(userData.MO.processes_{procId}.outFilePaths_{3, iChan}, '-useCache', true);
-            load(s.movieDataDynROICell{1});
-            newMD = MD; % MD built based on DynROI raw images.
-            clear MD;
-            if get(handles.slider_depth, 'Max') ~= newMD.zSize_ || get(handles.slider_depth, 'Value') > newMD.zSize_
-                if ZNr > newMD.zSize_
-                    ZNr = newMD.zSize_;
-                    set(handles.edit_depth,'String',ZNr);
-                    set(handles.slider_depth,'Value',ZNr);
-                end
-                set(handles.text_depthMax, 'String',['/' num2str(newMD.zSize_)]);
-                set(handles.slider_depth, 'Max',newMD.zSize_,...
-                    'SliderStep',[1/double(newMD.zSize_)  5/double(newMD.zSize_)]);
-            end
-        end
+% QZ comment out below part specific for BuildDynROIProcess
+%         if isa(userData.MO.processes_{procId}, 'BuildDynROIProcess')
+%             s = cached.load(userData.MO.processes_{procId}.outFilePaths_{3, iChan}, '-useCache', true);
+%             load(s.movieDataDynROICell{1});
+%             newMD = MD; % MD built based on DynROI raw images.
+%             clear MD;
+%             if get(handles.slider_depth, 'Max') ~= newMD.zSize_ || get(handles.slider_depth, 'Value') > newMD.zSize_
+%                 if ZNr > newMD.zSize_
+%                     ZNr = newMD.zSize_;
+%                     set(handles.edit_depth,'String',ZNr);
+%                     set(handles.slider_depth,'Value',ZNr);
+%                 end
+%                 set(handles.text_depthMax, 'String',['/' num2str(newMD.zSize_)]);
+%                 set(handles.slider_depth, 'Max',newMD.zSize_,...
+%                     'SliderStep',[1/double(newMD.zSize_)  5/double(newMD.zSize_)]);
+%             end
+%         end
         
         userData.MO.processes_{procId}.draw(iChan,frameNr, ZNr, 'output',output, varargin{:});
         % Check for projected Axis in output name
