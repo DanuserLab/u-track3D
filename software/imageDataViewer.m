@@ -966,7 +966,7 @@ channelBoxes =channelBoxes(index);
 if strcmp(imageTag,'radiobutton_channels')
     set(channelBoxes,'Enable','on');
     chanList=find(arrayfun(@(x)get(x,'Value'),channelBoxes));
-    userData.MO.channels_(chanList).draw(frameNr,ZNr,varargin{:});
+    userData.MO.imFolders_(chanList).draw(frameNr,ZNr,varargin{:});
     displayMethod = userData.MO.channels_(chanList(1)).displayMethod_;
     projectionAxis3D = 'Z'; % Just default
     procId = 0;

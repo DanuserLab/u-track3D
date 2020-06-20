@@ -118,5 +118,75 @@ classdef  TiffImagesReader < TiffSeriesReader
                 filenames = obj.filenames{iImFol};
             end
         end
+        
+        function I = loadImage(obj, c, t, varargin)
+            % QZ to overwrite TiffSeriesReader.loadImage
+            
+        % loadImage reads a single image plane as a 2D, YX Matrix
+        %
+        % loadImage(c,t,z) reads the YX plane at (c,t,z)
+        %
+        % loadImage(c,t) reads the YX plane at (c,t,1)
+        %
+        % Note: Override if you need to overload or change how the input is
+        % checked. Otherwise override loadImage_.
+        %
+        % Example:
+        %   reader = movieData.getReader();
+        %   I = reader.loadImage(1,1);
+        %   imshow(I,[]);
+        %
+        
+        % Backwards compatability before 2015/01/01:
+        % Previously this function was abstract and therefore should be
+        % overridden by all subclasses written prior to 2015/01/01
+         
+            ip = inputParser;
+            ip.addRequired('c', ...
+                @(c) isscalar(c) && ismember(c, 1 : obj.getSizeC()));
+            % TiffSeriesReader allows for multiple t values
+            ip.addRequired('t', ... 
+                @(t) all(ismember(t, 1 : obj.getSizeT())));
+            ip.addOptional('z', 1, ...
+                @(z) isscalar(z) && ismember(z, 1 : obj.getSizeZ()) || ...
+                    isempty(z));
+            ip.parse(c, t, varargin{:});
+                     
+            z = ip.Results.z;
+            if(isempty(z))
+                z = 1;
+            end
+                      
+            I = obj.loadImage_(c , t , z);
+        end
+        
+        function sizeT = getSizeT(obj)
+            if isempty(obj.nImages), obj.getDimensions(); end
+            sizeT = obj.nImages;
+        end
+    end
+    
+    methods ( Access = protected )
+        
+        function I = loadImage_(obj, iChan, iFrame, iZ)
+            % QZ to overwrite TiffSeriesReader.loadImage_
+            
+            if ~obj.isSingleMultiPageTiff(iChan)
+                % Read individual files
+                fileNames = obj.getImageFileNames(iChan, iFrame);
+                
+                % Initialize array
+                sizeX = obj.getSizeX(); % QZ WIP continue from here!!! need to add sizeX cell for TiffImagesreader, need to write getSizeX(iFrame).
+                sizeY = obj.getSizeY();
+                bitDepth = obj.getBitDepth();
+                I = zeros([sizeY, sizeX, numel(iFrame)], ['uint' num2str(bitDepth)]);
+                
+                for i=1:numel(iFrame)
+                    I(:,:,i) = imread([obj.paths{iChan} filesep fileNames{i}], iZ);
+                end
+            else % if the channel is stored as a multi-page TIFF
+                I = readtiff(fullfile(obj.paths{iChan}, obj.filenames{iChan}{1}), iFrame);
+            end
+        end
     end
 end
