@@ -201,7 +201,7 @@ if isa(userData.MO,'ImageData')
         'HorizontalAlignment','left','FontWeight','bold');
     arrayfun(@(i) uicontrol(imagePanel,'Style','checkbox',...
         'Position',[200+30*i hPosition 20 20],...
-        'Tag',['checkbox_channel' num2str(i)],'Value',1,...
+        'Tag',['checkbox_channel' num2str(i)],'Value',0,...
         'Callback',@(h,event) redrawChannel(h,guidata(h))),...
         1:numel(userData.MO.imFolders_));
     
@@ -966,8 +966,12 @@ channelBoxes =channelBoxes(index);
 if strcmp(imageTag,'radiobutton_channels')
     set(channelBoxes,'Enable','on');
     chanList=find(arrayfun(@(x)get(x,'Value'),channelBoxes));
+    if isempty(chanList)
+        set(channelBoxes(1), 'Value', 1);
+        chanList=find(arrayfun(@(x)get(x,'Value'),channelBoxes));
+    end
     userData.MO.imFolders_(chanList).draw(frameNr,ZNr,varargin{:});
-    displayMethod = userData.MO.channels_(chanList(1)).displayMethod_;
+    displayMethod = userData.MO.imFolders_(chanList(1)).displayMethod_;
     projectionAxis3D = 'Z'; % Just default
     procId = 0;
     if userData.MO.is3D()
