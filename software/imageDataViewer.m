@@ -2,8 +2,7 @@ function mainFig = imageDataViewer(MO,varargin)
 %MOVIEVIEWER creates a graphical interface to display the analysis output of a MovieObject
 % 
 % h = imageDataViewer(ImD)
-% imageDataViewer(ImD, [1 2]);
-% h = imageDataViewer(ML, 'movieIndex', 3);
+%%%%%%%%% h = imageDataViewer(ImL, 'movieIndex', 3);
 %
 % This function reads the components of a MovieObject including all
 % drawable anlaysis results (determined by the getDrawableOutput method).
@@ -36,8 +35,6 @@ function mainFig = imageDataViewer(MO,varargin)
 %   mainFig - the handle of the main control interface
 %
 % See also: graphViewer, movieViewerOptions
-%
-% Sebastien Besson, July 2012 (last modified Nov 2012)
 %
 % Copyright (C) 2020, Danuser Lab - UTSouthwestern 
 %

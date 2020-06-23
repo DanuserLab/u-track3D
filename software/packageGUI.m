@@ -92,7 +92,7 @@ end
 if ~isempty(userData.MD)
     userData.overviewFig = movieDataGUI(userData.MD(userData.id));
 elseif isempty(userData.MD) && ~isempty(userData.ImD)
-    userData.overviewFig = movieDataGUI(userData.ImD(userData.id));
+    userData.overviewFig = imageDataGUI(userData.ImD(userData.id));
 end
 set(handles.figure1, 'UserData', userData);
 
