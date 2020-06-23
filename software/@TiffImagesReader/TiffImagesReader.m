@@ -35,6 +35,9 @@ classdef  TiffImagesReader < TiffSeriesReader
         sizeYmax     % max of the length of the y dimension, vertical, in one imFolders. If as ImageData.reader, then is a cell array of sizeYmax of all imFolders.
         nImages      % number of images in one imFolders. If as ImageData.reader, then is a cell array of nImages of all imFolders. Also see reader.sizeT.
         bitDepthMax     % max of the bitDepth, among all images, in one imFolders. If as ImageData.reader, then is a cell array of bitDepthMax of all imFolders.
+        % sizeX      % a max(nImages) by nImFolders cell array, contain each image's x dimension
+        % sizeY      % a max(nImages) by nImFolders cell array, contain each image's y dimension
+        % bitDepth      % a max(nImages) by nImFolders cell array, contain each image's bitDepth
     end
     
     methods
@@ -42,6 +45,8 @@ classdef  TiffImagesReader < TiffSeriesReader
         % Constructor
         function obj = TiffImagesReader(imFolderPaths,varargin)
             obj = obj@TiffSeriesReader(imFolderPaths,varargin{:});
+            % QZ leave it like this for now:
+            % obj.filenames size is set here, right now is nImFolders x 1 cell array, in each cell it is a nImages x 1 cell
         end
         
         function getDimensions(obj)
@@ -51,11 +56,11 @@ classdef  TiffImagesReader < TiffSeriesReader
             % QZ sizeZ is always 1, since right now do not consider 3D iamges.
             % QZ Image dimensions and Bit dept do not need to be consistent.
             
-            obj.sizeXmax = cell(obj.getSizeC(), 1);
-            obj.sizeYmax = cell(obj.getSizeC(), 1);
-            obj.nImages = cell(obj.getSizeC(), 1);
-            obj.sizeZ = cell(obj.getSizeC(), 1);
-            obj.bitDepthMax = cell(obj.getSizeC(), 1);
+            obj.sizeXmax = cell(1, obj.getSizeC());
+            obj.sizeYmax = cell(1, obj.getSizeC());
+            obj.nImages = cell(1, obj.getSizeC());
+            obj.sizeZ = cell(1, obj.getSizeC());
+            obj.bitDepthMax = cell(1, obj.getSizeC());
             for iImFol = 1 : obj.getSizeC()
                 fileNames = obj.getImageFileNames(iImFol); % TiffImagesReader.filenames was set here.
                 imInfo = cellfun(@(x) imfinfo([obj.paths{iImFol} filesep x]), fileNames, 'unif', 0);
@@ -80,6 +85,17 @@ classdef  TiffImagesReader < TiffSeriesReader
                     end
                 end
                 obj.bitDepthMax{iImFol} = max(cellfun(@(x)(x.BitDepth), imInfo));
+            end
+
+            obj.sizeX = cell(max(cell2mat(obj.nImages)), obj.getSizeC());
+            obj.sizeY = cell(max(cell2mat(obj.nImages)), obj.getSizeC());
+            obj.bitDepth = cell(max(cell2mat(obj.nImages)), obj.getSizeC());
+            for iImFol = 1 : obj.getSizeC()
+                fileNames = obj.getImageFileNames(iImFol); % TiffImagesReader.filenames was set here.
+                imInfo = cellfun(@(x) imfinfo([obj.paths{iImFol} filesep x]), fileNames, 'unif', 0);
+                obj.sizeX(:, iImFol) = num2cell(cellfun(@(x)(x.Width), imInfo));
+                obj.sizeY(:, iImFol) = num2cell(cellfun(@(x)(x.Height), imInfo));
+                obj.bitDepth(:, iImFol) = num2cell(cellfun(@(x)(x.BitDepth), imInfo));
             end
 
             if obj.getSizeC() == 1
@@ -120,7 +136,7 @@ classdef  TiffImagesReader < TiffSeriesReader
         end
         
         function I = loadImage(obj, c, t, varargin)
-            % QZ to overwrite TiffSeriesReader.loadImage
+            % QZ to overwrite TiffSeriesReader.loadImage, called in ImFolder.loadImage
             
         % loadImage reads a single image plane as a 2D, YX Matrix
         %
@@ -140,7 +156,11 @@ classdef  TiffImagesReader < TiffSeriesReader
         % Backwards compatability before 2015/01/01:
         % Previously this function was abstract and therefore should be
         % overridden by all subclasses written prior to 2015/01/01
-         
+        
+        if numel(obj.paths) == 1
+            c = 1; % when obj is ImFolder's reader, sizeC is always 1.
+        end
+        
             ip = inputParser;
             ip.addRequired('c', ...
                 @(c) isscalar(c) && ismember(c, 1 : obj.getSizeC()));
@@ -159,9 +179,36 @@ classdef  TiffImagesReader < TiffSeriesReader
                       
             I = obj.loadImage_(c , t , z);
         end
+
+        function sizeX = getSizeX(obj, iImage)
+            % QZ to overwrite TiffSeriesReader.getSizeX, called in loadImage_ below.
+            if sum(cellfun(@isempty,obj.sizeX)) > 0, obj.getDimensions(); end
+            sizeX = obj.sizeX{iImage, 1}; % QZ for imFolders_ reader's only, if for ImD.reader, then change 1 to iImFol.
+        end
+
+        function sizeY = getSizeY(obj, iImage)
+            % QZ to overwrite TiffSeriesReader.getSizeY, called in loadImage_ below.
+            if sum(cellfun(@isempty,obj.sizeY)) > 0, obj.getDimensions(); end
+            sizeY = obj.sizeY{iImage, 1}; % QZ for imFolders_ reader's only, if for ImD.reader, then change 1 to iImFol.
+        end
         
+        function bitDepth = getBitDepth(obj, iImage)
+            % QZ to overwrite TiffSeriesReader.getBitDepth, called in loadImage_ below.
+            if sum(cellfun(@isempty,obj.bitDepth)) > 0, obj.getDimensions(); end
+            bitDepth = obj.bitDepth{iImage, 1}; % QZ for imFolders_ reader's only, if for ImD.reader, then change 1 to iImFol.
+        end
+
         function sizeT = getSizeT(obj)
-            if isempty(obj.nImages), obj.getDimensions(); end
+            % QZ to overwrite TiffSeriesReader.getSizeT
+            % nImages is cell for ImD.reader, is double for ImFolder.reader
+            switch class(obj.nImages)
+                case 'double'
+                    if isempty(obj.nImages), obj.getDimensions(); end
+                case 'cell'
+                    if sum(cellfun(@isempty,obj.nImages)) > 0
+                        obj.getDimensions();
+                    end
+            end
             sizeT = obj.nImages;
         end
     end
@@ -176,9 +223,9 @@ classdef  TiffImagesReader < TiffSeriesReader
                 fileNames = obj.getImageFileNames(iChan, iFrame);
                 
                 % Initialize array
-                sizeX = obj.getSizeX(); % QZ WIP continue from here!!! need to add sizeX cell for TiffImagesreader, need to write getSizeX(iFrame).
-                sizeY = obj.getSizeY();
-                bitDepth = obj.getBitDepth();
+                sizeX = obj.getSizeX(iFrame);
+                sizeY = obj.getSizeY(iFrame);
+                bitDepth = obj.getBitDepth(iFrame);
                 I = zeros([sizeY, sizeX, numel(iFrame)], ['uint' num2str(bitDepth)]);
                 
                 for i=1:numel(iFrame)
