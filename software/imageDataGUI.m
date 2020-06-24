@@ -237,10 +237,12 @@ end
 % movieOptions = vertcat(propNames,propValues);
 % movieOptions = reshape(movieOptions,1,numel(propNames)*2);
 
+movieOptions={'notes_', ''};
+
 % If imageDataGUI is under "Overview" mode
 if ~isempty(get(handles.edit_notes, 'String'))
     % movieOptions=horzcat(movieOptions,'notes_',get(handles.edit_notes, 'String'));
-    movieOptions=['notes_',get(handles.edit_notes, 'String')];
+    movieOptions={'notes_',get(handles.edit_notes, 'String')};
 end
 
 if ~isempty(userData.ImD),
@@ -390,6 +392,18 @@ end
 
 set(handles.figure1, 'Userdata', userData)
 guidata(hObject, handles);
+
+
+
+% --- Executes during object deletion, before destroying properties.
+function figure1_DeleteFcn(hObject, eventdata, handles)
+
+userData = get(handles.figure1, 'UserData');
+
+if isfield(userData, 'iconHelpFig') && ishandle(userData.iconHelpFig)
+   delete(userData.iconHelpFig) 
+end
+
 
 
 % --- Executes on button press in pushbutton_output.
@@ -621,5 +635,4 @@ function checkbox4_Callback(hObject, eventdata, handles)
 
 %%%%%%%% Below functions are in movieDataGUI.m:
 % function edit_property_Callback(hObject, eventdata, handles)
-% function figure1_DeleteFcn(hObject, eventdata, handles)
 % function checkbox4_Callback(hObject, eventdata, handles) % QZ checkbox4 is 'HCS data' checkbox, I do not need it now.

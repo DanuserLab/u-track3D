@@ -289,6 +289,15 @@ if ishandle(userData.newFig), delete(userData.newFig); end
 userData.newFig = movieDataGUI('mainFig',handles.figure1);
 set(handles.figure1,'UserData',userData);
 
+% --- Executes on button press in pushbutton_new.
+function pushbutton_newImD_Callback(hObject, eventdata, handles)
+
+userData = get(handles.figure1, 'UserData');
+% if imageDataGUI exist, delete it
+if ishandle(userData.newFig), delete(userData.newFig); end
+userData.newFig = imageDataGUI('mainFig',handles.figure1);
+set(handles.figure1,'UserData',userData);
+
 % --- Executes on button press in pushbutton_prepare.
 function pushbutton_prepare_Callback(hObject, eventdata, handles)
 

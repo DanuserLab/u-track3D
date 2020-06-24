@@ -33,7 +33,7 @@ classdef  ImageData < MovieObject
         imageDataFileName_      % The name under which the image data is saved
     end
 
-    properties (Transient = true)
+    properties (Transient = false) % QZ change ti false, so reader's value will be saved when ImD is saved to a file.
     	reader
     end
 
