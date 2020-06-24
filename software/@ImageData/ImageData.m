@@ -1,5 +1,5 @@
 classdef  ImageData < MovieObject
-	%
+    % Concrete implementation of MovieObject for images
 	%
 	% See also ImageData.ImageData
 %
@@ -33,7 +33,7 @@ classdef  ImageData < MovieObject
         imageDataFileName_      % The name under which the image data is saved
     end
 
-    properties (Transient = false) % QZ change ti false, so reader's value will be saved when ImD is saved to a file.
+    properties (Transient = false) % QZ change to false, so reader's value will be saved when ImD is saved to a file.
     	reader
     end
 
@@ -187,8 +187,9 @@ classdef  ImageData < MovieObject
 
         function save(obj,varargin)
             % Right now, do not consider save ancestor as backup
+            ImD = obj;
             fullPath = obj.getFullPath(); % QZ getFullPath is a MovieObject method
-            save(fullPath, 'obj')
+            save(fullPath, 'ImD') % here needs to be 'ImD', when use load(path), then the name of object in the workspace will be ImD instead of obj.
         end
 
   	    %% reader fcns
