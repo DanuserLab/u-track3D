@@ -304,24 +304,29 @@ function pushbutton_prepare_Callback(hObject, eventdata, handles)
 userData = get(handles.figure1, 'UserData');
 % if preparation GUI exist, delete it
 if ishandle(userData.newFig), delete(userData.newFig); end
+if ~isempty(userData.MD) && isempty(userData.ImD)
 userData.newFig = dataPreparationGUI('mainFig',handles.figure1);
+end
 set(handles.figure1,'UserData',userData);
 
 % --- Executes on button press in pushbutton_delete.
 function pushbutton_delete_Callback(hObject, eventdata, handles)
 
 userData = get(handles.figure1, 'Userdata');
-if isempty(userData.MD), return;end
+if isempty(userData.MD) && isempty(userData.ImD), return;end
 
 % Delete channel object
 num = get(handles.listbox_movie,'Value');
+if ~isempty(userData.MD) && isempty(userData.ImD)
 removedMovie=userData.MD(num);
 userData.MD(num) = [];
 
 % Test if movie does not share common ancestor
 checkCommonAncestor= arrayfun(@(x) any(isequal(removedMovie.getAncestor,x.getAncestor)),userData.MD);
 if ~any(checkCommonAncestor), delete(removedMovie); end
-
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    userData.ImD(num) = [];
+end
 % Refresh listbox_channel
 set(handles.figure1, 'Userdata', userData)
 refreshDisplay(hObject,eventdata,handles);
@@ -335,8 +340,12 @@ props=get(handles.listbox_movie, {'String','Value'});
 if isempty(props{1}), return; end
 
 userData = get(handles.figure1, 'UserData');
+if ~isempty(userData.MD) && isempty(userData.ImD)
 % if movieDataGUI exist, delete it
 userData.newFig = movieDataGUI(userData.MD(props{2}));
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    userData.newFig = imageDataGUI(userData.ImD(props{2}));
+end
 set(handles.figure1,'UserData',userData);
 
 % --- Executes during object deletion, before destroying properties.
@@ -371,21 +380,21 @@ try
     ImDOrMD = load([pathname filename]);
     % Add option for user to choose to do sanityCheck or not (updated 2019-04)
     if get(handles.checkbox_sanityCheckMD, 'Value') == 1
-        if isa(ImDOrMD.obj, 'MovieData')
+        if isfield(ImDOrMD,'MD')
             MD = MovieData.load([pathname filename]);
-        elseif isa(ImDOrMD.obj, 'ImageData')
+        elseif isfield(ImDOrMD,'ImD')
             ImD = ImageData.load([pathname filename]);
         end
     else
-        if isa(ImDOrMD.obj, 'MovieData')
+        if isfield(ImDOrMD,'MD')
             MD = MovieData.loadMatFile([pathname filename]);
-        elseif isa(ImDOrMD.obj, 'ImageData')
+        elseif isfield(ImDOrMD,'ImD')
             ImD = ImageData.loadMatFile([pathname filename]);
         end
     end
-    if isa(ImDOrMD.obj, 'MovieData')
+    if isfield(ImDOrMD,'MD')
         userData.MD = horzcat(userData.MD, MD);
-    elseif isa(ImDOrMD.obj, 'ImageData')
+    elseif isfield(ImDOrMD,'ImD')
         userData.ImD = horzcat(userData.ImD, ImD);
     end
 catch ME
@@ -482,6 +491,7 @@ if strcmpi('no', user_response), return; end
 % Delete movies and movie lists
 userData.MD = MovieData.empty(1,0);
 userData.ML = MovieList.empty(1,0);
+userData.ImD = ImageData.empty(1,0);
 set(handles.figure1, 'Userdata', userData)
 refreshDisplay(hObject, eventdata, handles)
 guidata(hObject, handles);
@@ -689,7 +699,11 @@ props=get(handles.listbox_movie, {'String','Value'});
 if isempty(props{1}), return; end
 
 userData = get(handles.figure1, 'UserData');
+if ~isempty(userData.MD) && isempty(userData.ImD)
 movieViewer(userData.MD(props{2}));
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    imageDataViewer(userData.ImD(props{2}));
+end
 
 
 % --------------------------------------------------------------------
