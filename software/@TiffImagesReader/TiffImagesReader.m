@@ -93,9 +93,9 @@ classdef  TiffImagesReader < TiffSeriesReader
             for iImFol = 1 : obj.getSizeC()
                 fileNames = obj.getImageFileNames(iImFol); % TiffImagesReader.filenames was set here.
                 imInfo = cellfun(@(x) imfinfo([obj.paths{iImFol} filesep x]), fileNames, 'unif', 0);
-                obj.sizeX(:, iImFol) = num2cell(cellfun(@(x)(x.Width), imInfo));
-                obj.sizeY(:, iImFol) = num2cell(cellfun(@(x)(x.Height), imInfo));
-                obj.bitDepth(:, iImFol) = num2cell(cellfun(@(x)(x.BitDepth), imInfo));
+                obj.sizeX(1:obj.nImages{1,iImFol}, iImFol) = num2cell(cellfun(@(x)(x.Width), imInfo));
+                obj.sizeY(1:obj.nImages{1,iImFol}, iImFol) = num2cell(cellfun(@(x)(x.Height), imInfo));
+                obj.bitDepth(1:obj.nImages{1,iImFol}, iImFol) = num2cell(cellfun(@(x)(x.BitDepth), imInfo));
             end
 
             if obj.getSizeC() == 1
