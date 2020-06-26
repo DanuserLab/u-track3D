@@ -164,9 +164,10 @@ classdef  TiffImagesReader < TiffSeriesReader
             ip = inputParser;
             ip.addRequired('c', ...
                 @(c) isscalar(c) && ismember(c, 1 : obj.getSizeC()));
-            % TiffSeriesReader allows for multiple t values
-            ip.addRequired('t', ... 
-                @(t) all(ismember(t, 1 : obj.getSizeT())));
+%             % TiffSeriesReader allows for multiple t values
+%             ip.addRequired('t', ... 
+%                 @(t) all(ismember(t, 1 : obj.getSizeT()))); % QZ this will give error if imFolder(i).nImages < max(imFolders.nImages)
+            ip.addRequired('t', @(t) isscalar(t));
             ip.addOptional('z', 1, ...
                 @(z) isscalar(z) && ismember(z, 1 : obj.getSizeZ()) || ...
                     isempty(z));
@@ -219,6 +220,7 @@ classdef  TiffImagesReader < TiffSeriesReader
             % QZ to overwrite TiffSeriesReader.loadImage_
             
             if ~obj.isSingleMultiPageTiff(iChan)
+               if iFrame <= obj.nImages
                 % Read individual files
                 fileNames = obj.getImageFileNames(iChan, iFrame);
                 
@@ -231,6 +233,10 @@ classdef  TiffImagesReader < TiffSeriesReader
                 for i=1:numel(iFrame)
                     I(:,:,i) = imread([obj.paths{iChan} filesep fileNames{i}], iZ);
                 end
+                
+               else
+                   I = zeros([obj.sizeYmax, obj.sizeXmax, numel(iFrame)], ['uint' num2str(obj.bitDepthMax)]);
+               end
             else % if the channel is stored as a multi-page TIFF
                 I = readtiff(fullfile(obj.paths{iChan}, obj.filenames{iChan}{1}), iFrame);
             end

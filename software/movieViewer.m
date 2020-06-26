@@ -609,6 +609,7 @@ if isa(userData.MO,'MovieData') && ~userData.MO.isHCS()
     addMovieViewerKeyboardShortcuts(mainFig, getFigure(handles,'Movie'));
 end
 
+%%%%%%%%% function movieViewer ends here %%%%%%%%%
 
 
 % function slider_callback(src,eventdata,panel)

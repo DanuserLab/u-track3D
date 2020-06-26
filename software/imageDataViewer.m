@@ -194,7 +194,7 @@ if isa(userData.MO,'ImageData')
     % Create controls for selecting channels (raw image)
     hPosition=hPosition+10;
     uicontrol(imagePanel,'Style','radio','Position',[10 hPosition 200 20],...
-        'Tag','radiobutton_channels','String',' Raw image','Value',1,...
+        'Tag','radiobutton_channels','String',' Raw images','Value',1,...
         'HorizontalAlignment','left','FontWeight','bold');
     arrayfun(@(i) uicontrol(imagePanel,'Style','checkbox',...
         'Position',[200+30*i hPosition 20 20],...
@@ -613,6 +613,7 @@ if isa(userData.MO,'ImageData') && ~userData.MO.isHCS()
     addMovieViewerKeyboardShortcuts(mainFig, getFigure(handles,'Image'));
 end
 
+%%%%%%%%% function imageDataViewer ends here %%%%%%%%%
 
 
 % function slider_callback(src,eventdata,panel)
