@@ -56,8 +56,7 @@ function mainFig = imageDataViewer(MO,varargin)
 % 
 
 % Adapted from movieViewer
-% Changed necessary 'MovieData' to 'ImageData', channels_ to imFolders_, nFrames_ to imFolders_(1).nImages_
-% QZ TODO nFrames_ should be Max(imFolders_(i).nImages_).
+% Changed necessary 'MovieData' to 'ImageData', channels_ to imFolders_, nFrames_ to max(cell2mat(userData.MO.reader.nImages)).
 % by Qiongjing (Jenny) Zou, Jun 2020
 
 % Check input
@@ -317,12 +316,12 @@ if isa(userData.MO,'ImageData')
         'Callback',@(h,event) redrawScene(h,guidata(h)));
     uicontrol(moviePanel,'Style','text','Position',[100 hPosition 40 15],...
         'HorizontalAlignment','left',...
-        'String',['/' num2str(userData.MO.imFolders_(1).nImages_)],'Tag','text_frameMax');
+        'String',['/' num2str(max(cell2mat(userData.MO.reader.nImages)))],'Tag','text_frameMax');
     
     uicontrol(moviePanel,'Style','slider',...
         'Position',[150 hPosition panelsLength-160 20],...
-        'Value',1,'Min',1,'Max',userData.MO.imFolders_(1).nImages_,...
-        'SliderStep',[1/double(userData.MO.imFolders_(1).nImages_)  5/double(userData.MO.imFolders_(1).nImages_)],...
+        'Value',1,'Min',1,'Max',max(cell2mat(userData.MO.reader.nImages)),...
+        'SliderStep',[1/double(max(cell2mat(userData.MO.reader.nImages)))  5/double(max(cell2mat(userData.MO.reader.nImages)))],...
         'Tag','slider_frame','BackgroundColor','white',...
         'Callback',@(h,event) redrawScene(h,guidata(h)));
     
@@ -646,7 +645,7 @@ size = [max(P(:,1)+P(:,3))+10 max(P(:,2)+P(:,4))+20];
 function runMovie(hObject,handles)
 
 userData = get(handles.figure1, 'UserData');
-nFrames = userData.MO.imFolders_(1).nImages_;
+nFrames = max(cell2mat(userData.MO.reader.nImages));
 startFrame = get(handles.slider_frame,'Value');
 if startFrame == nFrames, startFrame =1; end;
 if get(hObject,'Value')
@@ -830,7 +829,7 @@ else
     frameNumber = get(handles.slider_frame, 'Value');
 end
 frameNumber=round(frameNumber);
-frameNumber = min(max(frameNumber,1),userData.MO.imFolders_(1).nImages_);
+frameNumber = min(max(frameNumber,1),max(cell2mat(userData.MO.reader.nImages)));
 
 % QZ comment out 3D depth aquisition for imageDataViewer:
 % %3D depth aquisition
