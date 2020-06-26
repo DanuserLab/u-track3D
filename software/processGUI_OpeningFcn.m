@@ -139,11 +139,20 @@ end
 % Check for multiple movies else
 if isfield(handles,'checkbox_applytoall')
     if ~isa(userData_main.crtPackage, 'XcorrFluctuationPackage')
-        if numel(userData_main.MD) ==1
-            set(handles.checkbox_applytoall,'Value',0,'Visible','off');
-        else
-            set(handles.checkbox_applytoall, 'Value',...
-                userData_main.applytoall(userData.procID));
+        if ~isempty(userData_main.MD) && isempty(userData_main.ImD)
+            if numel(userData_main.MD) ==1
+                set(handles.checkbox_applytoall,'Value',0,'Visible','off');
+            else
+                set(handles.checkbox_applytoall, 'Value',...
+                    userData_main.applytoall(userData.procID));
+            end
+        elseif isempty(userData_main.MD) && ~isempty(userData_main.ImD)
+            if numel(userData_main.ImD) ==1
+                set(handles.checkbox_applytoall,'Value',0,'Visible','off');
+            else
+                set(handles.checkbox_applytoall, 'Value',...
+                    userData_main.applytoall(userData.procID));
+            end
         end
     else
         if numel(userData_main.ML) ==1
@@ -179,11 +188,17 @@ if ~initChannel, return; end
 funParams = userData.crtProc.funParams_;
 
 % Set up available input channels
+if isfield(userData, 'MD')
 set(handles.listbox_availableChannels,'String',userData.MD.getChannelPaths(), ...
     'UserData',1:numel(userData.MD.channels_));
 
 channelIndex = funParams.ChannelIndex;
+elseif isfield(userData, 'ImD')
+set(handles.listbox_availableChannels,'String',userData.ImD.getImFolderPaths(), ...
+    'UserData',1:numel(userData.ImD.imFolders_));
 
+channelIndex = funParams.ImFolderIndex;
+end
 % Find any parent process
 parentProc = userData.crtPackage.getParent(userData.procID);
 if isempty(userData.crtPackage.processes_{userData.procID}) && ~isempty(parentProc)
@@ -199,7 +214,11 @@ if isempty(userData.crtPackage.processes_{userData.procID}) && ~isempty(parentPr
 end
 
 if ~isempty(channelIndex)
+    if isfield(userData, 'MD')
     channelString = userData.MD.getChannelPaths(channelIndex);
+    elseif isfield(userData, 'ImD')
+        channelString = userData.ImD.getImFolderPaths(channelIndex);
+    end
 else
     channelString = {};
 end

@@ -40,7 +40,13 @@ userData.statusM(userData.id).Checked = userfcn_saveCheckbox(handles);
 set(handles.figure1, 'UserData', userData)
 
 % Determine the movie(s) to be processed
-if ~isempty(userData.MD), field='MD'; else field = 'ML'; end
+if ~isempty(userData.MD) && isempty(userData.ImD) 
+    field='MD'; 
+elseif isempty(userData.MD) && ~isempty(userData.ImD) 
+    field = 'ImD'; 
+else
+    field = 'ML'; 
+end
 if isa(userData.crtPackage, 'XcorrFluctuationPackage')
     field = 'ML';
 end
