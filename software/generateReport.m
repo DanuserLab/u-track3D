@@ -40,9 +40,12 @@ basicLogMsg = cell(size(movieException));
 extendedLogMsg = cell(size(movieException));
 for i = errorMovies(:)'
     % Format movie log message
-    if ~isempty(userData.MD), 
+    if ~isempty(userData.MD) && isempty(userData.ImD)
         field = 'MD';
         type = 'Movie'; 
+    elseif isempty(userData.MD) && ~isempty(userData.ImD)
+        field = 'ImD';
+        type = 'ImageData';
     else
         field = 'ML';
         type = 'Movie list'; 
