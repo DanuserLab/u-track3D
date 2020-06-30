@@ -715,7 +715,7 @@ end
 % end
 
 % Reset button
-set(hObject,'String', 'Run movie', 'Value', 0);
+set(hObject,'String', 'Run images', 'Value', 0);
 
 function render3DMovie(hObject,handles)
 userData = get(handles.figure1, 'UserData');
