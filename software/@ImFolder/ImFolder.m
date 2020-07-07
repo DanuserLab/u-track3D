@@ -30,6 +30,7 @@ classdef ImFolder < hgsetget & matlab.mixin.Copyable
 
         % -- new params --
         nImages_                    % Number of images, it is overwritable
+        pixelSize_                  % Pixel size in the object domain (nm). For all images in one ImFolder, the pixelSize_ should be the same.
     end
     
     properties(SetAccess=protected)
@@ -80,6 +81,11 @@ classdef ImFolder < hgsetget & matlab.mixin.Copyable
         
         function setName(obj, value)
             obj.name_ = value;
+        end
+
+        function set.pixelSize_(obj, value)
+            obj.checkPropertyValue('pixelSize_',value);
+            obj.pixelSize_=value;
         end
 
 
@@ -325,6 +331,8 @@ classdef ImFolder < hgsetget & matlab.mixin.Copyable
                     validator=@ischar;
                 case 'imageType_'
                     validator = @(x) ischar(x) && ismember(x,ImFolder.getImagingModes);
+                case 'pixelSize_'
+                    validator=@(x) all(isnumeric(x)) && all(x>0);
                 otherwise
                     validator=[];
             end
@@ -334,5 +342,11 @@ classdef ImFolder < hgsetget & matlab.mixin.Copyable
             % Retrieve list of accepted imaging modes
             modes={'Widefield';'TIRF';'Confocal'};
         end
+
+        % function fluorophores=getFluorophores() % QZ called in imFolderGUI, even not shown and used in imFolder.
+        %     % Retrieve list of accepted fluorophores
+        %     fluorPropStruct= getFluorPropStruct();
+        %     fluorophores={fluorPropStruct.name};
+        % end
     end
 end

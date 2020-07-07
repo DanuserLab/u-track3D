@@ -416,9 +416,16 @@ set(handles.edit_output, 'String', pathname);
 
 
 
-% --- Executes on button press in pushbutton_setting_chan.
-function pushbutton_setting_chan_Callback(hObject, eventdata, handles) % QZ I do not need it now
+% --- Executes on button press in pushbutton_setting_imFol.
+function pushbutton_setting_imFol_Callback(hObject, eventdata, handles)
 
+userData = get(handles.figure1, 'UserData');
+if isempty(userData.imFolders), return; end
+assert(isa(userData.imFolders(1), 'ImFolder'), 'User-defined: Not a valid ''ImFolder'' object');
+
+userData.setImFolderFig = imFolderGUI('mainFig', handles.figure1, 'modal');
+
+set(handles.figure1,'UserData',userData);
 
 
 % --- Executes on button press in pushbutton_bfImport.
