@@ -158,8 +158,8 @@ classdef  ImageData < MovieObject
             % Check the sanity of the ImageData objects
             %
             % First call the superclass sanityCheck. Then call the ImFolder
-            % objects sanityCheck, check image properties and set the
-            % nFrames_ and imSize_ properties.
+            % objects sanityCheck to add reader and nImages_ to imFolders,
+            % Also add reader to the ImD.
             % Save the movie to disk if run successfully
             
             % Call the superclass sanityCheck
@@ -173,6 +173,13 @@ classdef  ImageData < MovieObject
 
             % add reader to the ImageData
             obj.getReader().getDimensions; % QZ NEW!
+
+            % Copy the pixelSize_ of imFolders to the ImD's reader as well:
+            if any(arrayfun(@(x) ~isempty(x.pixelSize_), obj.imFolders_))
+            	for i = find(arrayfun(@(x) ~isempty(x.pixelSize_), obj.imFolders_))
+                	obj.getReader().setpixelSize(obj.imFolders_(i).pixelSize_, i);
+            	end
+            end
             
             % obj.checkDimensions() % in MovieData
 

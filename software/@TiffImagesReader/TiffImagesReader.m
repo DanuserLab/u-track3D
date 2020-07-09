@@ -38,6 +38,11 @@ classdef  TiffImagesReader < TiffSeriesReader
         % sizeX      % a max(nImages) by nImFolders cell array, contain each image's x dimension
         % sizeY      % a max(nImages) by nImFolders cell array, contain each image's y dimension
         % bitDepth      % a max(nImages) by nImFolders cell array, contain each image's bitDepth
+
+        % -- new params --
+        pixelSize                  % Pixel size in the object domain (nm). For all images in one ImFolder, the pixelSize should be the same. Copied from imFolder.pixelSize_. 
+                                   % If as ImageData.reader, then is a cell array of pixelSize of all imFolders. Not overwritable! 
+                                   % Also see ImageData.sanityCheck, ImFolder.sanityCheck, TiffImagesReader.setpixelSize and TiffImagesReader.set.pixelSize.
     end
     
     methods
@@ -179,6 +184,68 @@ classdef  TiffImagesReader < TiffSeriesReader
             end
                       
             I = obj.loadImage_(c , t , z);
+        end
+
+        function setpixelSize(obj, value, varargin)
+            if numel(obj.paths) == 1 % this for ImFolder.reader
+                obj.pixelSize = value; % this line will call set.pixelSize below.
+            elseif numel(obj.paths) > 1 && nargin > 2 % this for ImD.reader
+                if isempty(obj.pixelSize)
+                    obj.pixelSize = cell(1, obj.getSizeC());
+                end
+                obj.pixelSize{varargin{1}} = value;
+            end
+        end
+
+        function set.pixelSize(obj, value)
+            if numel(obj.paths) == 1 % this for ImFolder.reader
+                % Test if the property is unchanged
+                if isequal(obj.pixelSize,value), return; end
+                
+                % make pixelSize not overwritable.
+                if ~isempty(obj.pixelSize)
+                    error('lccb:set:readonly',...
+                        ['The pixelSize of the TiffImagesReader has been set previously and cannot be changed!']);
+                end
+                
+                if ~isnumeric(value) || value < 0
+                    error('lccb:set:invalid',...
+                        ['The supplied pixelSize is invalid!']);
+                end
+                
+                obj.pixelSize=value;
+            elseif numel(obj.paths) > 1 % this for ImD.reader
+                % Test if the property is unchanged
+                if isequal(obj.pixelSize,value), return; end
+                
+                if ~iscell(obj.pixelSize) && isempty(obj.pixelSize) && all(cellfun(@isempty, value))
+                    obj.pixelSize=value;
+                else
+                    % make pixelSize not overwritable.
+                    if any(~cellfun(@isempty, obj.pixelSize))
+                        idx = find(~cellfun(@isempty, obj.pixelSize));
+                        for i = idx
+                            if ~isequal(obj.pixelSize{i}, value{i})
+                                error('lccb:set:readonly',...
+                                    ['The pixelSize of the TiffImagesReader for ImD.imFolders_{%o} has been set previously and cannot be changed!'], i);
+                            end
+                        end
+                    end
+                    
+                    if ~iscell(value)
+                        error('lccb:set:invalid',...
+                            ['The supplied pixelSize is invalid!']);
+                    end
+                    
+                    if any(cellfun(@(x)~isempty(x) && x <= 0, value))
+                        error('lccb:set:invalid',...
+                            ['The supplied pixelSize is invalid!']);
+                    end
+                    
+                    
+                    obj.pixelSize=value;
+                end
+            end
         end
 
         function sizeX = getSizeX(obj, iImage)

@@ -151,6 +151,11 @@ classdef ImFolder < hgsetget & matlab.mixin.Copyable
                 'The imFolder''s owner is not the image data')
 
             obj.checkNumImages()
+
+            % if pixelSize_ was set by user, copy that to the reader:
+            if ~isempty(obj.pixelSize_)
+                obj.getReader().setpixelSize(obj.pixelSize_)
+            end
         end
 
         function checkNumImages(obj)
