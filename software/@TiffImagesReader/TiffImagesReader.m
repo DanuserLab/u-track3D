@@ -59,7 +59,7 @@ classdef  TiffImagesReader < TiffSeriesReader
             % the reader, and those properties are overwritable.
             
             % QZ sizeZ is always 1, since right now do not consider 3D iamges.
-            % QZ Image dimensions and Bit dept do not need to be consistent.
+            % QZ Image dimensions and Bit depth do not need to be consistent.
             
             obj.sizeXmax = cell(1, obj.getSizeC());
             obj.sizeYmax = cell(1, obj.getSizeC());

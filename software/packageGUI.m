@@ -76,7 +76,7 @@ varargout{1} = handles.output;
 userData = get(handles.figure1, 'UserData');
 if (isfield(userData,'startMovieSelectorGUI') && userData.startMovieSelectorGUI)
     movieSelectorGUI('packageName',userData.packageName,'MD',userData.MD,...
-        'ML', userData.ML , 'cluster', uTrackParCluster);
+        'ML', userData.ML , 'ImD', userData.ImD, 'cluster', uTrackParCluster);
     delete(handles.figure1)
 end
 
@@ -89,7 +89,7 @@ if isfield(userData, 'overviewFig') && ishandle(userData.overviewFig)
     delete(userData.overviewFig)
 end
 
-if ~isempty(userData.MD)
+if ~isempty(userData.MD) && isempty(userData.ImD)
     userData.overviewFig = movieDataGUI(userData.MD(userData.id));
 elseif isempty(userData.MD) && ~isempty(userData.ImD)
     userData.overviewFig = imageDataGUI(userData.ImD(userData.id));
@@ -99,16 +99,27 @@ set(handles.figure1, 'UserData', userData);
 % --- Executes on Save button press or File>Save
 function save_Callback(~, ~, handles)
 userData = get(handles.figure1, 'UserData');
+if ~isempty(userData.MD) && isempty(userData.ImD)
 set(handles.text_saveStatus, 'Visible', 'on')
 arrayfun(@save,userData.MD);
 pause(.3)
 set(handles.text_saveStatus, 'Visible', 'off')
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    set(handles.text_ImDsaveStatus, 'Visible', 'on')
+    arrayfun(@save,userData.ImD);
+    pause(.3)
+    set(handles.text_ImDsaveStatus, 'Visible', 'off')
+end
 
 
 function switchMovie_Callback(hObject, ~, handles)
 
 userData = get(handles.figure1, 'UserData');
+if ~isempty(userData.MD) && isempty(userData.ImD)
 nMovies = length(userData.MD);
+elseif isempty(userData.MD) && ~isempty(userData.ImD)
+    nMovies = length(userData.ImD);
+end
 
 switch get(hObject,'Tag')
     case 'pushbutton_left'
@@ -146,8 +157,10 @@ end
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 userData = get(handles.figure1,'Userdata');
-if isfield(userData, 'MD')
+if isfield(userData, 'MD') && isempty(userData.ImD)
     MD = userData.MD;
+elseif isfield(userData, 'ImD') && isempty(userData.MD) && ~isempty(userData.ImD)
+    ImD = userData.ImD;
 else
     delete(handles.figure1);
     return;
@@ -156,7 +169,13 @@ end
 saveRes = questdlg('Do you want to save the current progress?', ...
     'Package Control Panel');
 
-if strcmpi(saveRes,'yes'), arrayfun(@save,userData.MD); end
+if strcmpi(saveRes,'yes')
+    if isfield(userData, 'MD') && isempty(userData.ImD)
+        arrayfun(@save,userData.MD);
+    elseif isfield(userData, 'ImD') && isempty(userData.MD) && ~isempty(userData.ImD)
+        arrayfun(@save,userData.ImD);
+    end
+end
 if strcmpi(saveRes,'cancel'), return; end
 delete(handles.figure1);
 
@@ -220,12 +239,12 @@ end
 
 % --------------------------------------------------------------------
 function menu_file_open_Callback(~, ~, handles)
-% Call back function of 'New' in menu bar
+% Call back function of 'Open' in menu bar
 userData = get(handles.figure1,'Userdata');
 % if ~isempty(userData.MD), field = 'MD'; else field = 'ML'; end
 % arrayfun(@(x) x.save,userData.(field));
 movieSelectorGUI('packageName',userData.packageName,...
-    'MD', userData.MD, 'ML', userData.ML);
+    'MD', userData.MD, 'ML', userData.ML, 'ImD', userData.ImD);
 delete(handles.figure1)
 
 % --------------------------------------------------------------------
