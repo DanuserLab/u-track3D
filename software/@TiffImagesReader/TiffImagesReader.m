@@ -53,6 +53,13 @@ classdef  TiffImagesReader < TiffSeriesReader
             % QZ leave it like this for now:
             % obj.filenames size is set here, right now is nImFolders x 1 cell array, in each cell it is a nImages x 1 cell
         end
+
+        function checkPath(obj, iImFol)
+            % QZ to overwrite TiffSeriesReader.checkPath
+            % Check imFolder path existence
+            assert(logical(exist(obj.paths{iImFol}, 'dir')), ...
+                'ImFolder path specified is not a valid directory! Please double check the imFolder path!');
+        end
         
         function getDimensions(obj)
             % Set/update sizeXmax, sizeYmax, nImages, bitDepthMax, sizeZ, and filenames for
