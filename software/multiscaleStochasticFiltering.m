@@ -127,7 +127,6 @@ samples=p.samplePos.interpValue(maxResponseScale,[1 1 XZRatio]);
 p.samplePos.setLabel('maxResponseScale',samples);
 
 samples=p.samplePos.interpValue(voteMap,[1 1 XZRatio]);
-p.samplePos.setLabel('voteMap',samples);
 
 samples=p.samplePos.interpValue(energyMap,[1 1 XZRatio]);
 p.samplePos.setLabel('energyMap',samples);

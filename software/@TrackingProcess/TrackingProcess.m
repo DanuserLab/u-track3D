@@ -484,6 +484,7 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
                 funParams.processBuildDynROI=[]; % DynROI used for computation
                 funParams.buildDynROIProcessChannel=1;
                 funParams.saveResults.exportTrackabilityData = 1; %FLAG allow exporting Kalman filter variable
+                funParams.gapCloseParam.minTrackLen = 10; % Change the default for NewUtrack3DPackage, on 2020-11-25
             else
                 funParams.probDim = 2;
             end

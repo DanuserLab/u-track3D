@@ -87,9 +87,11 @@ classdef PointSourceDetectionProcess3DDynROI < PointSourceDetectionProcess3D
             funParams.frameRange=[1 owner.nFrames_];
             
 %             types = PointSourceDetectionProcess3DDynROI.getDetectionTypeOptions;
-            funParams.algorithmType = {'pointSourceAutoSigmaFit'};
+            % funParams.algorithmType = {'pointSourceAutoSigmaFit'};
+            funParams.algorithmType = {'multiscaleDetectionDebug'}; % Change the default for NewUtrack3DPackage, on 2020-11-25
 
-            funParams.alpha=.05;
+            % funParams.alpha=.05;
+            funParams.alpha=.001; % Change the default for NewUtrack3DPackage, on 2020-11-25
             funParams.Mode = {'xyzAc'};
             funParams.FitMixtures = false;
             funParams.MaxMixtures = 5;
@@ -99,14 +101,15 @@ classdef PointSourceDetectionProcess3DDynROI < PointSourceDetectionProcess3D
             funParams.RefineMaskValid = false;
             funParams.ClearMaskBorder = true;
             funParams.processBuildDynROI=[];
-            funParams.buildDynROIProcessChannel=1; % Added for the setting GUI, but not used in the wrapper func.
+            funParams.buildDynROIProcessChannel=1;
             funParams.saveMaskFilePattern=[];
             funParams.samplePos=[];
 
 
             %% multiscale detector
             funParams.debug=false;
-            funParams.scales=[2:0.5:4];
+            % funParams.scales=[2:0.5:4];
+            funParams.scales=[1.25:0.5:2.25]; % Change the default for NewUtrack3DPackage, on 2020-11-25
             funParams.version='';
             
 

@@ -8,6 +8,8 @@ function RGBVol=renderChannel(ch1,ch2,type,varargin)
             RGBVol=greenRedRender(ch1,ch2);
         case 'stereo'
             RGBVol=uint8(255*sc(cat(3,ch1,ch2),'stereo'));
+        case 'stereoNoRenorm'
+            RGBVol=uint8(255*sc(cat(3,ch1,ch2),[0 255],'stereo'));
         case 'stereoInv'
             RGBVol=uint8(255*sc(cat(3,ch2,ch1),'stereo'));
         case 'testMix'

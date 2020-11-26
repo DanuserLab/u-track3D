@@ -1,4 +1,4 @@
-function [ref,cenTrack,RMSE]=ICPIntegrationFirstReg(detections)
+function [ref,cenTrack,RMSE]=ICPIntegrationPrevReg(detections)
 
 
 pos=detections.getPosMatrix();
@@ -38,7 +38,7 @@ CovYZ=(y-mean(y))'*(z-mean(z))/(N-1);
 CovZY=CovYZ;
 covMXI=[var(x) CovXY  CovXZ;CovYX   var(y)   CovYZ; CovZX   CovZY    var(z)];
 
-%% Compute orthogonal basis and use it for the frame of reference of the first frame
+% Compute orthogonal basis and use it for the frame of reference of the first frame
 [V,D,W] = eig(covMXI);
 [L,sIdx]=sort(-sum(D));
 X=V(:,sIdx(1));
@@ -55,59 +55,28 @@ meanPos=cellfun(@(p) nanmean(p,1),pos,'unif',0);
 % covMX{1}=eye(3);
 % meanPos{1}=[0,0,0];
 shiftPos=meanPos;
-% transforms=cell(1,numel(covMX));
+transforms=cell(1,numel(covMX));
 
-% A=zeros(4);
-% A(1:3,1:3)=covMX{1};
-% A(4,1:3)=-shiftPos{1}*covMX{1};
-% A(4,4)=1;
-% transforms{1}=affine3d(A);
+
+A=zeros(4);
+A(1:3,1:3)=covMX{1};
+A(4,1:3)=-shiftPos{1}*covMX{1};
+A(4,4)=1;
+transforms{1}=affine3d(A);
 
 pc=pointCloud(pos{1});
 % pc=pcdownsample(pc,'random',0.5)
 RMSE=zeros(1,numel(covMX));
 for i=2:numel(covMX)
 	cpc=pointCloud(pos{i});
-    pc=pointCloud(pos{1});
-    % cpc=pcdownsample(cpc,'random',0.2);
-    % pc=pcdownsample(pc,'random',0.2);
-	[tform,~,RMSE(i)]=pcregrigid(cpc,pc);   %,'Tolerance',[0.001,0.001],'MaxIterations',100);
-	% tform.T(4,1:3)=tform.T(4,1:3);
+	% [tform,pc,RMSE(i)]=pcregrigid(cpc,pc,'Tolerance',[0.001,0.001],'MaxIterations',100);
+	[tform,pc,RMSE(i)]=pcregrigid(cpc,pc);
     covMX{i}=(tform.T(1:3,1:3))*covMX{1};
     shiftPos{i}=tform.transformPointsInverse(shiftPos{1});
-
-	% covMX{i}=covMX{1};
-	% shiftPos{i}=shiftPos{i-1}+T;
 end
 cenTrack=Detections().initFromPosMatrices(shiftPos,shiftPos).buildTracksFromDetection();
-
-
 
 % tracksROI=TracksROI([cenTrack; tracks],funParams.fringe,false);
 
 ref=FrameOfRef().setOriginFromTrack(cenTrack);
 ref.setBase(covMX);
-
-
-
-%% snippet
-
-% [tform,pc]=pcregrigid(pointCloud(pos{i}),pc);
-% transforms{i}=tform;
-% covMX{i}=tform.T(1:3,1:3);
-% shiftPos{i}=-tform.T(4,1:3)*inv(covMX{i})';
-
-% B=covMX{i-1};
-% tformNoOrig=tform;
-% tformNoOrig.T(4,1:3)=0;
-% X =  tformNoOrig.transformPointsInverse(B(1,:));
-% Y =  tformNoOrig.transformPointsInverse(B(2,:));
-% Z =  tformNoOrig.transformPointsInverse(B(3,:));
-% % covMX{i}=tform.transformPointsInverse(covMX{i-1});
-% covMX{i}=[X;Y;Z];
-
-
-% shiftPos{i}=tform.transformPointsInverse(shiftPos{i-1});
-
-end
-
