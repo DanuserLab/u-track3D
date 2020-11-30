@@ -246,7 +246,8 @@ classdef  BuildDynROIProcess < Process & NonSingularProcess
             funParams.OutputDirectory = [outputDir  filesep 'BuildDynROI'];
 
             % The type of ROI 
-            funParams.roiType='fitTrackSetRegistered';
+            % funParams.roiType='fitTrackSetRegistered';
+            funParams.roiType='fitTrackSetFrameByFrame'; % Change the default for NewUtrack3DPackage, on 2020-11-30
             % Alternative types of ROI:
             % - singleTracks              
             % - singleStaticTracks
@@ -260,8 +261,9 @@ classdef  BuildDynROIProcess < Process & NonSingularProcess
             % - allTracksStatic
 
             % Fringe added in addition to box around all tracks
-            funParams.fringe=20;
-            
+            % funParams.fringe=20;
+            funParams.fringe=10; % Change the default for NewUtrack3DPackage, on 2020-11-30
+
             % Used for selection in selectROI
             % funParams.processChannel=1; % deleted b/c same as funParams.ChannelIndex
 
