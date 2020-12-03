@@ -43,7 +43,7 @@ end
 
 
 %% Build MD by channel
-fullpath1 = '/project/bioinformatics/Danuser_lab/shared/proudot/3D-u-track/GUIDev/raw/endocyticPits_cropped/'; % Raw data path 
+fullpath1 = '	/project/bioinformatics/Danuser_lab/shared/proudot/3D-u-track/GUIDev/raw/endocyticPits_cropped/'; % Raw data path 
 path1 = ['/tmp/GUITuto/']; % Output folder for movie metadata and results
 mkClrDir(path1);
 c1 = Channel(fullpath1);
@@ -63,11 +63,8 @@ MD.save;
 % Creation and naming
 processRenderFullMIP=RenderDynROI(MD);
 processRenderFullMIP.setProcessTag('fullMIP');
-
 % Setting parameter
 funParams=processRenderFullMIP.getParameters();
-funParams.intMinPrctil=[80];
-funParams.intMaxPrctil=[99.99];
 funParams.mipSize=800;
 processRenderFullMIP.setPara(funParams);
 processRenderFullMIP.run();
@@ -77,7 +74,6 @@ MD.save();
 %% Detection parameterization and processing 
 processDetection=PointSourceDetectionProcess3D(MD);
 MD.addProcess(processDetection);
-
 funParams = processDetection.getParameters();
 funParams.algorithmType= {'multiscaleDetectionDebug'};
 funParams.version='useMaxResponse';
@@ -109,7 +105,7 @@ funParams=processBuildDynROI.getParameters();
 tracks=TracksHandle(processTrack.loadChannelOutput(1)); 
 tracks=tracks([tracks.lifetime]>10);		
 funParams.trackObjects=tracks;
-funParams.roiType='trackSetStable'; % Building the DynROI around the set of trajectories
+funParams.roiType='fitTrackSetFrameByFrame'; % Building the DynROI around the set of trajectories
 funParams.fringe=10;
 processBuildDynROI.setPara(funParams);
 processBuildDynROI.setProcessTag('trackSetROI');
