@@ -92,7 +92,7 @@ function [trackedFeatureIndx,trackedFeatureInfo,kalmanFilterInfo,...
 % and Brian Devree from Copenhagen University to reduce the tracking time.
 % Changes made in this function are modified the code to pass the function named 
 % "costMatRandomDirectedSwitchingMotionLink" as a handle, instead of calling it through 
-% an eval statement.
+% an eval statement. Writing to force UNIX encoding. 
 %
 % Copyright (C) 2020, Danuser Lab - UTSouthwestern 
 %
@@ -369,7 +369,7 @@ for iFrame = 1 : numFrames-1
                 [trackabilityCost{iFrame+1}, ...
                     samplesDetections(iFrame+1),samplingLabel{iFrame+1},votingLabel{iFrame+1}, ... 
                     trackabilityCostFull{iFrame+1},predExpectation(iFrame+1)]= ...
-                    simulatedPredictionVoting(kalmanFilterInfo(iFrame),costMatName,costMatParam,dynCostMatParam);
+                    simulatedPredictionVoting(kalmanFilterInfo(iFrame),costMatFunc,costMatParam,dynCostMatParam);
 
             end
             % -- USER DEFINED FUNCTION -- %
