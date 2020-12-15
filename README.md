@@ -1,18 +1,30 @@
 
 # Table of Contents
 
-1.  [Accessing the code and example dataset](#org1d179c8)
-2.  [Script tutorial](#org420e003)
-3.  [GUI walk-through (Beta version)](#org7cf0355)
-    1.  [Getting started and loading data](#orgfc22fb2)
-    2.  [Detection, tracking and review on the whole volumetric sequence](#orgedb8968)
-    3.  [Definition of DynROI and tracking in DynROI](#org7365323)
-4.  [Known issues](#orga1449e9)
-5.  [Milestones](#orgc396f96)
-6.  [Requirements](#org5f9ce5d)
+1.  [Associated paper](#org85621ee)
+2.  [Accessing the code and example dataset](#org8753984)
+3.  [Script usage](#org61356ca)
+4.  [Reproducing the u-track 3D paper with the tutorial scripts](#orga9df050)
+5.  [Performances](#orgf7f5dd7)
+6.  [GUI walk-through (Beta version)](#org35c09af)
+    1.  [Getting started and loading data](#org093ae98)
+    2.  [Detection, tracking and review on the whole volumetric sequence](#orgd52b83a)
+    3.  [Definition of DynROI and tracking in DynROI](#org47ef5ca)
+7.  [Known issues](#org2e8674d)
+8.  [Milestones](#orgb3ec9c0)
+9.  [Software Requirements](#org2196469)
 
 
-<a id="org1d179c8"></a>
+<a id="org85621ee"></a>
+
+# Associated paper
+
+U-track 3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet micoscopy. The software is associated to the following publication currently under review. 
+
+[Roudot, Philippe, Wesley R Legant, Qiongjing Zou, Kevin M Dean, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and Gaudenz Danuser. "U-Track 3D: Measuring and Interrogating Intracellular Dynamics in Three Dimensions". BioRxiv.  https://doi.org/10.1101/2020.11.30.404814.](//select/items/1_ZI5GQH6G)
+
+
+<a id="org8753984"></a>
 
 # Accessing the code and example dataset
 
@@ -20,42 +32,221 @@ Download the code:
 
     git clone https://github.com/DanuserLab/u-track3D.git
 
-Download the example dataset:
+Download the example datasets:
 
-[Breast cancer cells imaged with diaSLM (Dean et. al. 2016) expressing eGFP-labelled alpha subunit of the AP-2 complex (cropped and limited to 50 time point, 540MB).](https://cloud.biohpc.swmed.edu/index.php/s/4gNCzmayPLdbw9s)
+[Endocytosis dataset](https://cloud.biohpc.swmed.edu/index.php/s/4gNCzmayPLdbw9s): Breast cancer cells  expressing eGFP-labelled alpha subunit of the AP-2 complex imaged with diaSLM by K. Dean (Dean et. al. 2016). The raw data has been cropped and limited to 50 time point (540MB).
+
+[Mitosis dataset](https://cloud.biohpc.swmed.edu/index.php/s/5eceFNPcPB4iosa): HeLa cells undergoing mitosis and expressing eGFP-labeled EB3 and mCherry-labeled CENPA imaged in dual-channel lattice light-sheet microscopy by W. Legant (David et. al. 2019). The raw data has been cropped, the entire sequence has been made available. 
 
 
-<a id="org420e003"></a>
+<a id="org61356ca"></a>
 
-# Script tutorial
+# Script usage
 
-Scripting is generally recommended for the analysis of a large number of acquisition due to its flexibility and automated rendering capabilities. The scripting library also provides a larger array of rendering approaches than the GUI version:
+Scripting is generally recommended for the analysis of a large number of acquisitions due to its flexibility and automated rendering capabilities. At the moment, the scripting library also provides more features than the GUI: 
 
+-   A larger set of dynROIs are available
+-   Trackability computations
 -   Fully automated mipping overlay and video production
 -   Amira export of detection and tracking
 -   Point cloud rendering for faster display of detection mask
 
-After cloning the repo and adding the code folder path to Matlab, you will find the tutorial script at:
+After cloning the repo and adding the code folder path to Matlab, you will find the following tutorial script in the repository:
 
-    trackingEndocyticPits_tutoscript.m
+    tutoscript/trackingEndocyticPits_visualLibraryDemo.m
 
-Prepare the script as follows: 
+This script follows the sequence of processes possible in the GUI with additional visualization approaches: 
 
--   Adjust parpool(20) with the number of parallelizable core on your maching
--   Adjust <fullpath1> to the raw data folder name
--   Adjust <path1> to your output folder name
+-   Detection and tracking on the full datasets
+-   Generate a dynROI following a set of trajectories
+-   Detection and tracking inside the dynROI
+-   Rendering results on MIP
+-   Exporting to Amira
+-   Point cloud rendering
 
-Follow the script comments for instructions on parameterization and visualization. 
+**Example dataset**: Endocytosis dataset
+
+    tutoscript/trackingEndocyticPits_trackability.m
+
+This script is a variation of the former to demonstrate manual dynROI selection and trackability: 
+
+-   Detection and tracking on the full dataset
+-   Generate a dynROI from a set of trajectories
+-   Selecting manually a ROI within the DynROI
+-   Detection and tracking inside the manual  dynROI
+-   Compute trackability in the manual dynROI
+-   Rendering results on MIP
+
+**Example dataset**: Endocytosis dataset
+
+    tutoscript/trackingKFiberDynROI.m
+
+This script demonstrates how to built a custom dynROI following two trajectories: 
+
+-   Detection and tracking on the full dataset
+-   Generate a conical dynROI from a pair of trajectories
+-   Detection inside the custom dynROI
+-   Visualizaton and statistics
+
+**Example dataset**: Mitosis datasets
+
+The minimum configuration for each script includes: 
+
+-   Adjusting parpool(#) with # the number of parallelizable core on your machine
+-   Adjusting <fullpath#> to the raw data folder name with # reflecting the number of channels
+-   Adjusting <analysisRoot> to your output folder name
 
 
-<a id="org7cf0355"></a>
+<a id="orga9df050"></a>
+
+# Reproducing the u-track 3D paper with the tutorial scripts
+
+The scripts reproduce the majority of features used in numerical experiments presented in the u-track 3D paper. Because of the large size of the datasets used in the paper, the script operates on smaller datasets that are amenable to direct download by the community. Here is the detail of the features that are demonstrated, their associated figures in the paper, and the script that reproduces them. One script can demonstrate several feature with a same dataset:
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Feature</th>
+<th scope="col" class="org-left">Figure</th>
+<th scope="col" class="org-left">Script</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">Tracking Brownian motions described by endocytic events</td>
+<td class="org-left">Fig1.a</td>
+<td class="org-left">trackingEndocyticPits_visualLibraryDemo</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Multiscale Detections (Pole, KT, plus-ends)</td>
+<td class="org-left">Fig2.f-m</td>
+<td class="org-left">trackingKFiberDynROI</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Building dynROI around tracks</td>
+<td class="org-left">Fig2.a</td>
+<td class="org-left">trackingEndocyticPits_visualLibraryDemo</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Building conical dynROI between MT Poles and Chromosomes</td>
+<td class="org-left">Fig2.j</td>
+<td class="org-left">trackingKFiberDynROI</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Building Manual ROI nested in a dynROI</td>
+<td class="org-left">Fig3.f</td>
+<td class="org-left">trackingEndocyticPits_trackability</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Detection restricted to a dynROI</td>
+<td class="org-left">Fig2.k-m</td>
+<td class="org-left">trackingKFiberDynROI</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Tracking restricted to a dynROI</td>
+<td class="org-left">Fig3.f</td>
+<td class="org-left">trackingEndocyticPits_visualLibraryDemo</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Trackability</td>
+<td class="org-left">Fig3.f-g</td>
+<td class="org-left">trackingEndocyticPits_trackability</td>
+</tr>
+</tbody>
+</table>
+
+Here is a list of the measurements that  cannot be reproduced with those scripts and datasets due to the size of the associated datasets: 
+
+-   Enocytic events lifetime analysis on on Breast Cancer Cell imaging (Fig1.b,c)
+-   Microtubule instability response to biochemical inhibition (Fig1.e,g).
+-   Adhesion shape studies (Fig2.a-d).
+-   Interpolar plane estimation from prometaphase to metaphase (Fig 2.f-i.)
+-   Trackability in the complete volume of the Breast cancer-cell, a crop of this dataset is however provided (Fig3.f-h)
+
+Scripts to be released
+
+-   Tracking SOX2 single molecule with lattice light-sheet microscopy.
+-   Tracking microtubule dynamic instability
+
+
+<a id="orgf7f5dd7"></a>
+
+# Performances
+
+The software is CPU-optimized and has been tested on the following machines. 
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Computer main features</th>
+<th scope="col" class="org-left">OS</th>
+<th scope="col" class="org-left">script</th>
+<th scope="col" class="org-right">Time (s)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">Intel Xeon E5-2680 28 cores @ 2.4 GHz - 528 GB Ram</td>
+<td class="org-left">Linux</td>
+<td class="org-left">trackingEndocyticPits_visualLibraryDemo (incl. rendering)</td>
+<td class="org-right">142</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Intel Xeon E5-2680 16 cores @ 2.7 GHz - 32 GB Ram</td>
+<td class="org-left">Linux</td>
+<td class="org-left">trackingEndocyticPits_visualLibraryDemo (incl. rendering)</td>
+<td class="org-right">206</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org35c09af"></a>
 
 # GUI walk-through (Beta version)
 
 The GUI is generally recommended for the analysis of a couple files and test the capacity of u-track 3D on a given type of dataset. With straightforward data loading and a simplified execution pipeline, the GUI is designed toward an intuitive first experience. 
 
 
-<a id="orgfc22fb2"></a>
+<a id="org093ae98"></a>
 
 ## Getting started and loading data
 
@@ -88,11 +279,11 @@ In order to keep the set of operation linear, u-track 3D is organized in seven p
 ![img](tutosmaller/blankSetup.PNG)
 
 
-<a id="orgedb8968"></a>
+<a id="orgd52b83a"></a>
 
 ## Detection, tracking and review on the whole volumetric sequence
 
-Each process must parameterized or "setup" before being run. Sometime it merely involves opening the setup dialog and accepting the defaults by clicking "apply", as for example below with the MIP rendering process in the case of a single channel. This step ensures that the users explore the capacity the algorithm to adapt to their datasets.
+Each process must be parameterized or "setup" before being run. Sometime it merely involves opening the setup dialog and accepting the defaults by clicking "apply", as for example below with the MIP rendering process in the case of a single channel. This step ensures that the users explore the capacity the algorithm to adapt the parameters to their datasets.
 
 ![img](./tutosmaller/MIPParam.png)
 
@@ -121,7 +312,7 @@ The control of Frame-to-frame linking and gap closing is performered in separate
 Once tracks are computed ("Apply" parameter and click on "run"), trajectories can be reviewed similarly to the review of detections. 
 
 
-<a id="org7365323"></a>
+<a id="org47ef5ca"></a>
 
 ## Definition of DynROI and tracking in DynROI
 
@@ -153,37 +344,42 @@ and for tracking process:
 ![img](tutosmaller/TrackingSelectDynROI.png)
 
 
-<a id="orga1449e9"></a>
+<a id="org2e8674d"></a>
 
 # Known issues
 
 -   The set of parameters for detection is confusing. Further streamlining improvement will be made for a smaller set of parameters to be visible.
+-   Detection and tracking sets used for dynROI estimation must be set manually, even when there is only one option.
+-   The Detection set must be selected before the last tracking step. This problem is also being solved.
 
 
-<a id="orgc396f96"></a>
+<a id="orgb3ec9c0"></a>
 
 # Milestones
 
--   Adding Amira trajectory export in addition to detection in example script
--   Add an example of script-based Biofomart import
--   Demonstrate trackability in the script
--   Augmenting Script comments
--   Adding more types of DynROI in the GUI
--   Fix annoying requirement in the GUI work flow (cf. Known Issues)
+-   [X] Adding Amira trajectory export in addition to detection in example script
+-   [X] Demonstrate trackability in the script
+-   [ ] Add an example of script-based Bioformt import
+-   [ ] Adding more types of DynROI in the GUI
+-   [ ] Fix annoying requirement in the GUI work flow (cf. Known Issues)
 
 
-<a id="org5f9ce5d"></a>
+<a id="org2196469"></a>
 
-# Requirements
+# Software Requirements
 
--   This software require the following Matlab licences
-    -   Matlab 2015a to 2019b
+-   This software requires the following Matlab toolboxes
+    -   Matlab 2018a to 2019b
     -   Computer Vision Toolbox
     -   Image Processing Toolbox
+    -   Control System Toolbox
+    -   Optimization Toolbox
+    -   Image Processing Toolbox
+    -   Statistics and Machine Learning Toolbox
+    -   Curve Fitting Toolbox
+    -   Computer Vision Toolbox
+    -   Parallel Computing Toolbox
 
--   This software with this test dataset has been tested the following setups
+-   This software has been on the following OS
     -   Linux Red Hat 7
-    -   Matlab 2015a to 2019b
-    -   32Gb of memory
-    -   Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
 
