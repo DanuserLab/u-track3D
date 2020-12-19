@@ -663,17 +663,17 @@ if saveMovie
 end
 
 % Initialize movie output
-if saveMovie && strcmpi(movieFormat,'mov')
+if saveMovie && strcmpi(movieFormat,'mov') && get(hObject,'Value')
     MakeQTMovie('start',moviePath);
     MakeQTMovie('quality',.9)
 end
 
-if saveMovie && strcmpi(movieFormat,'avi')
-    movieFrames(1:nFrames) = struct('cdata', [],'colormap', []);
+if saveMovie && strcmpi(movieFormat,'avi') && get(hObject,'Value')
+    movieFrames(1:nFrames-startFrame+1) = struct('cdata', [],'colormap', []);
 end
 
 % Initialize frame output
-if saveFrames;
+if saveFrames && get(hObject,'Value')
     fmt = ['%0' num2str(ceil(log10(nFrames))) 'd'];
     frameName = @(frame) ['frame' num2str(frame, fmt) '.tif'];
     fpath = [userData.MO.outputDirectory_ filesep 'Frames'];
@@ -682,7 +682,14 @@ if saveFrames;
 end
 
 for iFrame = startFrame : nFrames
-    if ~get(hObject,'Value'), return; end % Handle pushbutton press
+    % Handle pushbutton press
+    if ~get(hObject,'Value')
+        % Finish frame/movie creation
+        if saveFrames; fprintf('\n'); end
+        if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('finish'); end
+        
+        return;
+    end
     set(handles.slider_frame, 'Value',iFrame);
     redrawScene(hObject, handles);    
     drawnow;
@@ -690,7 +697,7 @@ for iFrame = startFrame : nFrames
     % Get current frame for frame/movie export
     hFig = getFigure(handles,'Movie');
     if saveMovie && strcmpi(movieFormat,'mov'), MakeQTMovie('addfigure'); end
-    if saveMovie && strcmpi(movieFormat,'avi'), movieFrames(iFrame) = getframe(hFig); end
+    if saveMovie && strcmpi(movieFormat,'avi'), movieFrames(iFrame-startFrame+1) = getframe(hFig); end
     if saveFrames
         print(hFig, '-dtiff', fullfile(fpath,frameName(iFrame)));
         fprintf('\b\b\b\b%3d%%', round(100*iFrame/(nFrames)));
