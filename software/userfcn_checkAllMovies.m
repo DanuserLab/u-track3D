@@ -3,7 +3,7 @@ function userfcn_checkAllMovies(procID, value, handles)
 % Add ImageData compatibility
 % Updated by Qiongjing (Jenny) Zou, July 2020
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

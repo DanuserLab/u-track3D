@@ -37,7 +37,7 @@ function stackWrite(im,fileName,compType)
 %
 % Last modified by Tiao Xie 02/2013 to accomodate 3D RGB stacks (4D matrix)
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

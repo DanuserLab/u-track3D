@@ -1,7 +1,7 @@
 function b = isstruct(obj)
     % The class extends the old structure so it can be used equivalently
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

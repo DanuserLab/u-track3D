@@ -33,7 +33,7 @@ function matrix = getMatrix(obj,frames)
 %
 % See also convStruct2MatNoMS, convStruct2MatIgnoreMS
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

@@ -24,7 +24,7 @@
 %   map - (len)x3 colormap table.
 %   B - size(A)x3 truecolor array.
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

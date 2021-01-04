@@ -26,7 +26,7 @@ function y = linspaceNDim(d1, d2, n)
 % 
 %
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

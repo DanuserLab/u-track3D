@@ -20,7 +20,7 @@ function varargout = pointSourceDetectionProcessGUI3D(varargin)
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 
@@ -744,6 +744,9 @@ end
 selType = get(handles.edit_algorithmType, 'Value'); 
 algoType = PointSourceDetectionProcess3D.getValidAlgorithmTypes{selType};
 
+
+set(handles.edit_isoCoord, 'enable','on');
+
 if any(ismember(algoType,{'watershedApplegateAuto', ...
                       'watershedApplegate',...
                       'bandPassWatershed',...
@@ -764,14 +767,26 @@ elseif any(ismember(algoType,{'pointSourceLM',...
                               'pointSourceAutoSigmaMixture',... 
                               'pointSourceAutoSigmaLM',...     
                               'pointSourceAutoSigmaFitSig',... 
-                              'pSAutoSigmaWatershed',...
-                              'multiscaleDetectionDebug'}))
+                              'pSAutoSigmaWatershed'}))
 
     children = get(handles.uipanel_pointSource,'Children');
     set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','on')
     
     children = get(handles.uipanel_water,'Children');
     set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off')
+
+elseif any(ismember(algoType,{'multiscaleDetectionDebug'}))
+
+    children = get(handles.uipanel_pointSource,'Children');
+    set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off');
+    children = get(handles.uipanel_water,'Children');
+    set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off');
+
+    set(handles.text_alpha, 'enable','on');
+    set(handles.edit_alpha, 'enable','on');
+    set(handles.text_scales, 'enable','on');
+    set(handles.edit_scales, 'enable','on');
+    set(handles.edit_isoCoord, 'enable','off');
                           
 end
 
@@ -996,7 +1011,9 @@ function edit_algorithmType_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from edit_algorithmType
     selType = get(handles.edit_algorithmType, 'Value'); 
     algoType = PointSourceDetectionProcess3D.getValidAlgorithmTypes{selType};
+ 
     
+set(handles.edit_isoCoord, 'enable','on');
 
 if any(ismember(algoType,{'watershedApplegateAuto', ...
                       'watershedApplegate',...
@@ -1017,14 +1034,26 @@ elseif any(ismember(algoType,{'pointSourceLM',...
                               'pointSourceAutoSigmaMixture',... 
                               'pointSourceAutoSigmaLM',...     
                               'pointSourceAutoSigmaFitSig',... 
-                              'pSAutoSigmaWatershed',...
-                              'multiscaleDetectionDebug'}))
+                              'pSAutoSigmaWatershed'}))
 
     children = get(handles.uipanel_pointSource,'Children');
     set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','on');
     children = get(handles.uipanel_water,'Children');
     set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off');
-                          
+  
+elseif any(ismember(algoType,{'multiscaleDetectionDebug'}))
+
+    children = get(handles.uipanel_pointSource,'Children');
+    set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off');
+    children = get(handles.uipanel_water,'Children');
+    set(children(strcmpi ( get (children,'Type'),'UIControl')),'enable','off');
+
+    set(handles.text_alpha, 'enable','on');
+    set(handles.edit_alpha, 'enable','on');
+    set(handles.text_scales, 'enable','on');
+    set(handles.edit_scales, 'enable','on');
+    set(handles.edit_isoCoord, 'enable','off');
+
 end
 
         
