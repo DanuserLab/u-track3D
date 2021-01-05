@@ -100,7 +100,7 @@ classdef PointSourceDetectionProcess3DDynROI < PointSourceDetectionProcess3D
             funParams.RefineMaskLoG = false;
             funParams.RefineMaskValid = false;
             funParams.ClearMaskBorder = true;
-            funParams.processBuildDynROI=[];
+            funParams.processBuildDynROI=[]; % make first available DynROIProc selected&set on the GUI, even default is empty in the process class. edited on 2021-01-04
             funParams.buildDynROIProcessChannel=1;
             funParams.saveMaskFilePattern=[];
             funParams.samplePos=[];

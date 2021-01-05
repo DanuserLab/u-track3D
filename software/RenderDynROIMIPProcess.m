@@ -90,7 +90,7 @@ classdef  RenderDynROIMIPProcess < RenderFullMIPProcess
             % The channel to be rendered
 
             %% 2) Parameters that may not make sense in the GUI
-            funParams.processBuildDynROI=[];
+            funParams.processBuildDynROI=[]; % make first available DynROIProc selected&set on the GUI, even default is empty in the process class. edited on 2021-01-04
             funParams.buildDynROIProcessChannel=1; % Added for the setting GUI, but not used in the wrapper func.
             % Specifying the dynROI we want to look at by selecting the
             % process that build them. In V1, we specify only a single ROI.

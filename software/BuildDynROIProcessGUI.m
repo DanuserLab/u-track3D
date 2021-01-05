@@ -102,8 +102,10 @@ detectProcNames = cellfun(@(x) x.getName(),userData.MD.processes_(detectProc),'U
 detectProcString = vertcat('Choose later',detectProcNames(:));
 detectProcData=horzcat({[]},num2cell(detectProcID));
 detectProcValue = find(cellfun(@(x) isequal(x,funParams.detectionProcess),userData.MD.processes_(detectProc)));
-if isempty(detectProcValue)
+if isempty(detectProcValue) && isempty(detectProcID)
     detectProcValue = 1; 
+elseif isempty(detectProcValue) && ~isempty(detectProcID) % make first available detectProc selected&set on the GUI, even funParams.detectionProcess = [].
+    detectProcValue = 2;
 else
     detectProcValue = detectProcValue+1; 
 end
@@ -136,8 +138,10 @@ trackProcNames = cellfun(@(x) x.getName(),userData.MD.processes_(trackProc),'Uni
 trackProcString = vertcat('Choose later',trackProcNames(:));
 trackProcData=horzcat({[]},num2cell(trackProcID));
 trackProcValue = find(cellfun(@(x) isequal(x,funParams.trackProcess),userData.MD.processes_(trackProc)));
-if isempty(trackProcValue)
+if isempty(trackProcValue) && isempty(trackProcID)
     trackProcValue = 1; 
+elseif isempty(trackProcValue) && ~isempty(trackProcID) % make first available trackProc selected&set on the GUI, even funParams.trackProcess = [].
+    trackProcValue = 2; 
 else
     trackProcValue = trackProcValue+1; 
 end

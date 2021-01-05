@@ -271,11 +271,11 @@ classdef  BuildDynROIProcess < Process & NonSingularProcess
             funParams.nSample=3;
 
             % Track process and associated channel
-            funParams.trackProcess=[];
+            funParams.trackProcess=[]; % make first available trackProc selected&set on the GUI, even funParams.trackProcess = []. edited on 2021-01-04
             funParams.trackProcessChannel=1;
 
             % Detection process and associated channel
-            funParams.detectionProcess=[];
+            funParams.detectionProcess=[]; % make first available detectProc selected&set on the GUI, even funParams.detectionProcess = []. edited on 2021-01-04
             funParams.detectionProcessChannel=1;
 
             % Absent from the GUI/Advanced parameters
