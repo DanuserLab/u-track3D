@@ -1,4 +1,4 @@
-classdef  BuildDynROIProcess < Process & NonSingularProcess
+classdef  BuildDynROIProcess < ImageAnalysisProcess & NonSingularProcess
     % Process Class for Build Dynamic Region of Interest (ROI)
     % BuildDynamicROI.m is the wrapper function
     % BuildDynROIProcess is part of New Utrack 3D package
@@ -58,8 +58,7 @@ classdef  BuildDynROIProcess < Process & NonSingularProcess
                 end
                 super_args{4} = funParams;
             end
-            % obj = obj@DetectionProcess(super_args{:});
-            obj = obj@Process(super_args{1:2});
+            obj = obj@ImageAnalysisProcess(super_args{:});
             obj.funName_ = super_args{3};
             obj.funParams_ = super_args{4};
 

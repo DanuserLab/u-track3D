@@ -55,7 +55,13 @@ end
 
 % Check detection process first
 if isempty(p.DetProcessIndex)
-    p.DetProcessIndex = movieData.getProcessIndex('DetectionProcess',1,1);
+    % show only relevant detection processes in the list selection dialog
+    % box for TrackingDynROIProcess. edit 2021-01-06
+    if isa(trackProc, 'TrackingDynROIProcess')
+        p.DetProcessIndex = movieData.getProcessIndex('PointSourceDetectionProcess3DDynROI',1,1);
+    else
+        p.DetProcessIndex = movieData.getProcessIndex('DetectionProcess',1,1);
+    end
 
     if isempty(p.DetProcessIndex)
         error(['Detection has not been run! '...

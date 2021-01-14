@@ -112,8 +112,9 @@ end
 set(handles.popupmenu_DetectProcessIndex,'String',detectProcString,...
     'UserData',detectProcData,'Value',detectProcValue);
 
-% Update channels listboxes depending on the selected process
-popupmenu_DetectProcessIndex_Callback(hObject, eventdata, handles)
+% Comment out below for this specific BuildDynROIProcessGUI, as do not want to Update channels listboxes depending on the selected process
+% % Update channels listboxes depending on the selected process
+% popupmenu_DetectProcessIndex_Callback(hObject, eventdata, handles)
 
 
 % Set up available tracking channels
@@ -148,8 +149,9 @@ end
 set(handles.popupmenu_TrackProcessIndex,'String',trackProcString,...
     'UserData',trackProcData,'Value',trackProcValue);
 
-% Update channels listboxes depending on the selected process
-popupmenu_TrackProcessIndex_Callback(hObject, eventdata, handles)
+% Comment out below for this specific BuildDynROIProcessGUI, as do not want to Update channels listboxes depending on the selected process
+% % Update channels listboxes depending on the selected process
+% popupmenu_TrackProcessIndex_Callback(hObject, eventdata, handles)
 
 %Setup ROI type list box
 set(handles.popupmenu_ROItypes, 'String', BuildDynROIProcess.getValidROITypes);
@@ -247,6 +249,11 @@ end
 %Get selected track channels
 trackChannelProps = get(handles.listbox_selectedTrackChannels, {'Userdata','String'});
 funParams.trackProcessChannel = trackChannelProps{1};
+if isempty(funParams.trackProcessChannel)
+    errordlg('Input Tracking Channels cannot be empty.',...
+        'Setting Error','modal');
+    return
+end
 % Retrieve track process
 props=get(handles.popupmenu_TrackProcessIndex,{'UserData','Value'});
 trackProcessIndex = props{1}{props{2}};
@@ -254,6 +261,11 @@ if ~isempty(trackProcessIndex)
   funParams.trackProcess = userData.MD.processes_{trackProcessIndex};
 else 
   funParams.trackProcess = [];
+end
+if isempty(funParams.trackProcess)
+    errordlg('Tracking process is not seletected.',...
+        'Setting Error','modal');
+    return
 end
 
 
@@ -473,46 +485,48 @@ function popupmenu_TrackProcessIndex_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_TrackProcessIndex contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu_TrackProcessIndex
 
-% Retrieve selected process ID
-props= get(handles.popupmenu_TrackProcessIndex,{'UserData','Value'});
-procID = props{1}{props{2}};
+%%% Comment out below for this specific BuildDynROIProcessGUI, as do not want to Update channels listboxes depending on the selected process
 
-% Read process and check available channels
-userData = get(handles.figure1, 'UserData');
-if(isempty(userData)), userData = struct(); end;
+% % Retrieve selected process ID
+% props= get(handles.popupmenu_TrackProcessIndex,{'UserData','Value'});
+% procID = props{1}{props{2}};
 
-if isempty(procID)
-    allChannelIndex=1:numel(userData.MD.channels_);
-else
-    allChannelIndex = find(userData.MD.processes_{procID}.checkChannelOutput);
-end
+% % Read process and check available channels
+% userData = get(handles.figure1, 'UserData');
+% if(isempty(userData)), userData = struct(); end;
 
-% Set up available channels listbox
-if ~isempty(allChannelIndex)
-    if isempty(procID)
-        channelString = userData.MD.getChannelPaths(allChannelIndex);
-    else
-        channelString = userData.MD.processes_{procID}.outFilePaths_(1,allChannelIndex);
-    end
-else
-    channelString = {};
-end
-set(handles.listbox_availableTrackChannels,'String',channelString,'UserData',allChannelIndex);
+% if isempty(procID)
+%     allChannelIndex=1:numel(userData.MD.channels_);
+% else
+%     allChannelIndex = find(userData.MD.processes_{procID}.checkChannelOutput);
+% end
 
-% Set up selected channels listbox
-channelIndex = get(handles.listbox_selectedTrackChannels, 'UserData');
-channelIndex(~ismember(channelIndex,allChannelIndex)) = [];%So that indices may repeat, and handles empty better than intersect
-if ~isempty(channelIndex)
-    if isempty(procID)
-        channelString = userData.MD.getChannelPaths(channelIndex);
-    else
-        channelString = userData.MD.processes_{procID}.outFilePaths_(1,channelIndex);
-    end
-else
-    channelString = {};
-    channelIndex = [];%Because the intersect command returns a 0x1 instead of 0x0 which causes concatenation errors
-end
-set(handles.listbox_selectedTrackChannels,'String',channelString,'UserData',channelIndex);
+% % Set up available channels listbox
+% if ~isempty(allChannelIndex)
+%     if isempty(procID)
+%         channelString = userData.MD.getChannelPaths(allChannelIndex);
+%     else
+%         channelString = userData.MD.processes_{procID}.outFilePaths_(1,allChannelIndex);
+%     end
+% else
+%     channelString = {};
+% end
+% set(handles.listbox_availableTrackChannels,'String',channelString,'UserData',allChannelIndex);
+
+% % Set up selected channels listbox
+% channelIndex = get(handles.listbox_selectedTrackChannels, 'UserData');
+% channelIndex(~ismember(channelIndex,allChannelIndex)) = [];%So that indices may repeat, and handles empty better than intersect
+% if ~isempty(channelIndex)
+%     if isempty(procID)
+%         channelString = userData.MD.getChannelPaths(channelIndex);
+%     else
+%         channelString = userData.MD.processes_{procID}.outFilePaths_(1,channelIndex);
+%     end
+% else
+%     channelString = {};
+%     channelIndex = [];%Because the intersect command returns a 0x1 instead of 0x0 which causes concatenation errors
+% end
+% set(handles.listbox_selectedTrackChannels,'String',channelString,'UserData',channelIndex);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -724,46 +738,48 @@ function popupmenu_DetectProcessIndex_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns popupmenu_DetectProcessIndex contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from popupmenu_DetectProcessIndex
 
-% Retrieve selected process ID
-props= get(handles.popupmenu_DetectProcessIndex,{'UserData','Value'});
-procID = props{1}{props{2}};
+%%% Comment out below for this specific BuildDynROIProcessGUI, as do not want to Update channels listboxes depending on the selected process
 
-% Read process and check available channels
-userData = get(handles.figure1, 'UserData');
-if(isempty(userData)), userData = struct(); end;
+% % Retrieve selected process ID
+% props= get(handles.popupmenu_DetectProcessIndex,{'UserData','Value'});
+% procID = props{1}{props{2}};
 
-if isempty(procID)
-    allChannelIndex=1:numel(userData.MD.channels_);
-else
-    allChannelIndex = find(userData.MD.processes_{procID}.checkChannelOutput);
-end
+% % Read process and check available channels
+% userData = get(handles.figure1, 'UserData');
+% if(isempty(userData)), userData = struct(); end;
 
-% Set up available channels listbox
-if ~isempty(allChannelIndex)
-    if isempty(procID)
-        channelString = userData.MD.getChannelPaths(allChannelIndex);
-    else
-        channelString = userData.MD.processes_{procID}.outFilePaths_(1,allChannelIndex);
-    end
-else
-    channelString = {};
-end
-set(handles.listbox_availableDetectChannels,'String',channelString,'UserData',allChannelIndex);
+% if isempty(procID)
+%     allChannelIndex=1:numel(userData.MD.channels_);
+% else
+%     allChannelIndex = find(userData.MD.processes_{procID}.checkChannelOutput);
+% end
 
-% Set up selected channels listbox
-channelIndex = get(handles.listbox_selectedDetectChannels, 'UserData');
-channelIndex(~ismember(channelIndex,allChannelIndex)) = [];%So that indices may repeat, and handles empty better than intersect
-if ~isempty(channelIndex)
-    if isempty(procID)
-        channelString = userData.MD.getChannelPaths(channelIndex);
-    else
-        channelString = userData.MD.processes_{procID}.outFilePaths_(1,channelIndex);
-    end
-else
-    channelString = {};
-    channelIndex = [];%Because the intersect command returns a 0x1 instead of 0x0 which causes concatenation errors
-end
-set(handles.listbox_selectedDetectChannels,'String',channelString,'UserData',channelIndex);
+% % Set up available channels listbox
+% if ~isempty(allChannelIndex)
+%     if isempty(procID)
+%         channelString = userData.MD.getChannelPaths(allChannelIndex);
+%     else
+%         channelString = userData.MD.processes_{procID}.outFilePaths_(1,allChannelIndex);
+%     end
+% else
+%     channelString = {};
+% end
+% set(handles.listbox_availableDetectChannels,'String',channelString,'UserData',allChannelIndex);
+
+% % Set up selected channels listbox
+% channelIndex = get(handles.listbox_selectedDetectChannels, 'UserData');
+% channelIndex(~ismember(channelIndex,allChannelIndex)) = [];%So that indices may repeat, and handles empty better than intersect
+% if ~isempty(channelIndex)
+%     if isempty(procID)
+%         channelString = userData.MD.getChannelPaths(channelIndex);
+%     else
+%         channelString = userData.MD.processes_{procID}.outFilePaths_(1,channelIndex);
+%     end
+% else
+%     channelString = {};
+%     channelIndex = [];%Because the intersect command returns a 0x1 instead of 0x0 which causes concatenation errors
+% end
+% set(handles.listbox_selectedDetectChannels,'String',channelString,'UserData',channelIndex);
 
 
 % --- Executes during object creation, after setting all properties.
