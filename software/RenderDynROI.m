@@ -61,7 +61,7 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
 %             output(n).type = 'image';
 %         end
 %
-% Copyright (C) 2020, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 
@@ -116,7 +116,7 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                 MD=process.getOwner();
             end
 
-            renderFrames=funParams.renderFrames
+            renderFrames=funParams.renderFrames;
 
             dynROISampleIdx=1:numel(dynROICell);
             dynROISampleIdx=dynROISampleIdx(1:min(funParams.dynROIRenderingSamplingNumber,end));
