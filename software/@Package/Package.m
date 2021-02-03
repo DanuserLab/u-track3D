@@ -306,7 +306,8 @@ classdef Package < hgsetget
         
         function relocate(obj,oldRootDir,newRootDir)
             obj.outputDirectory_ = relocatePath(obj.outputDirectory_,oldRootDir,newRootDir);
-            cellfun(@(x) (x.relocate(oldRootDir,newRootDir)), obj.processes_(~cellfun(@isempty,obj.processes_)));
+            % comment out below line to avoid processes_ being relocated "twice" with wrong newPath
+%             cellfun(@(x) (x.relocate(oldRootDir,newRootDir)), obj.processes_(~cellfun(@isempty,obj.processes_)));
         end
         
         function procSeq = getProcessSequence(obj, procIDs)
