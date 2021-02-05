@@ -39,7 +39,7 @@ function [ bfMemoDir ] = bfGetMemoDirectory( makeDir )
     end
 
     % bfMemoDir = [tempdir 'bioformatsMatlab'];
-    bfMemoDir = [tempdir 'bioformatsMatlabMemoDir']
+    bfMemoDir = [tempdir 'bioformatsMatlabMemoDir'];
     
 % Decided this was best dealt with upstream:
 % https://github.com/openmicroscopy/bioformats/issues/3034
