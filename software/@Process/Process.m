@@ -383,6 +383,21 @@ classdef Process < hgsetget
             for i=1:numel(relocateFields)
                 obj.(relocateFields{i}) = relocatePath(obj.(relocateFields{i}),...
                     oldRootDir,newRootDir);
+                
+                % special relocate for BuildDynROIProcess in NewUTrack3DPackage and its dynROI_rawImages MD
+                if isa(obj, 'BuildDynROIProcess') && isequal(relocateFields{i}, 'outFilePaths_')
+                    load(obj.outFilePaths_{3, 1});
+                    movieDataDynROICell{1} = relocatePath(movieDataDynROICell{1}, oldRootDir,newRootDir);
+                    save(obj.outFilePaths_{3, 1},'movieDataDynROICell');
+                    clear movieDataDynROICell
+                    
+                    % relocate for MD built based on DynROI raw images.
+                    s = cached.load(obj.outFilePaths_{3, 1}, '-useCache', true);
+                    load(s.movieDataDynROICell{1});
+                    MD.relocate(oldRootDir,newRootDir, true);
+                    MD.save
+                    clear s MD
+                end    
             end
         end
         
