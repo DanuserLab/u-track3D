@@ -230,6 +230,7 @@ switch funParams.roiType
         
         for tIdx=1:numel(tracks)
             dynROICell{tIdx}=StaticTracksROI(tracks(tIdx),funParams.fringe,funParams.lifetimeOnly);
+            
             if(~isempty(funParams.processBuildDynROI))
                 dynROICell{tIdx}.setDefaultRef(ref);
             end
@@ -284,7 +285,7 @@ switch funParams.roiType
         
         
         
-    case {'trackSetStable','fitTrackSetFrameByFrame'}
+    case {'trackSetStableOld','fitTrackSetFrameByFrameOld'}
         %% Use tracks if necessary
         if(isempty(funParams.trackObjects))
             tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
@@ -413,6 +414,33 @@ switch funParams.roiType
         %         hold on;
         % end
         
+    case {'trackSetStable','fitTrackSetFrameByFrame'}
+        %% Use tracks if necessary
+        if(isempty(funParams.trackObjects))
+            tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
+        else
+            tracks=funParams.trackObjects;
+        end
+        tracks=fillTrackGaps(tracks);
+        detections=Detections().setFromTracks(tracks);
+        [ref,cenTrack]=ICPIntegration(detections);
+        tracksROI=TracksROI([cenTrack;tracks],funParams.fringe,false);
+        tracksROI.setDefaultRef(ref);
+        dynROICell={tracksROI};
+        
+    case {'trackSetStableNew','fitTrackSetFrameByFrameNew'}
+        %% Use tracks if necessary
+        if(isempty(funParams.trackObjects))
+            tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
+        else
+            tracks=funParams.trackObjects;
+        end
+        tracks=fillTrackGaps(tracks);
+        detections=Detections().setFromTracks(tracks);
+        [ref,cenTrack]=ICPIntegrationPrevReg(detections);
+        tracksROI=TracksROI([cenTrack;tracks],funParams.fringe,false);
+        tracksROI.setDefaultRef(ref);
+        dynROICell={tracksROI};
         
     case {'trackSetStableDebug','fitTrackSetRegistered'}
         %% Use tracks if necessary
@@ -514,12 +542,25 @@ switch funParams.roiType
             dynROIProjectionCell=data{1}.processProjectionsCell;
             [xBound,yBound,zBound]=dynROIProjectionCell{1}.getBoundingBox();
             [maxXY,maxZY,maxZX,three]=dynROIProjectionCell{1}.loadFrame(funParams.processChannel,1);
-            imshow(maxXY,[],'Border','tight');
-            xyIndices = ceil(getrect);
+            
+            
+            hFig = figure; hAxes = axes( hFig );
+            
+            Position = get(hAxes,'Position');
+            set(hAxes,'Position',[0.1 0.1 Position(3) Position(4)]);
+            
+            imshow(maxXY,[],'Parent',hAxes);
+            title(hAxes,'Select ROI in XY projection');
+            xyIndices = ceil(getrect(hAxes));
             maxZX=maxZX(xyIndices(1):xyIndices(1)+xyIndices(3),:);
-            maxZX=maxZX';  % flip to get Z up
-            imshow(maxZX,[],'Border','tight');
-            zIndices = ceil(getrect);
+            maxZX=maxZX';  % flip to get Z updated
+            
+            hFig = figure; hAxes = axes( hFig );
+            Position = get(hAxes,'Position');
+            set(hAxes,'Position',[0.1 0.1 Position(3) Position(4)]);
+            imshow(maxZX,[],'Parent',hAxes);
+            title(hAxes,'Select ROI in XZ projection');
+            zIndices = ceil(getrect(hAxes));
             
             XRatio=size(maxXY,2)/(xBound(2)-xBound(1))
             YRatio=size(maxXY,1)/(yBound(2)-yBound(1))
@@ -610,8 +651,8 @@ switch funParams.roiType
         %% Smaller Conical ROIs used for context (TODO replace with statistical model in the context ROI)
         angle=funParams.angle;
         dynROICell=cell(numel(tracks{1}),numel(tracks{2}));
-        for cIdx=1:size(tracks{1})
-            for aIdx=1:size(tracks{2})
+        for cIdx=1:numel(tracks{1})
+            for aIdx=1:numel(tracks{2})
                 dynROICell{cIdx,aIdx}=ConeROI([tracks{1}(cIdx);tracks{2}(aIdx)],angle);
             end
         end
@@ -622,8 +663,9 @@ switch funParams.roiType
         else
             tracks=funParams.trackObjects;
         end
-        
-        %% Smaller Conical ROIs used for context (TODO replace with statistical model in the context ROI)
+        if(~iscell(tracks(1)))
+            tracks=arrayfun(@(t) t, tracks,'unif',0);
+        end
         
         dynROICell=cell(numel(tracks{1}),numel(tracks{2}));
         for cIdx=1:size(tracks{1})
@@ -647,7 +689,7 @@ switch funParams.roiType
         end
         if(~isempty(funParams.trackProcess))
             tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
-            tracks=tracks([tracks.lifetime]==max([tracks.lifetime]));
+            tracks=tracks([tracks.lifetime]==median([tracks.lifetime]));
             randSelect=randi([1 numel(tracks)],funParams.nSample,1);
             selectedTrack=tracks(randSelect);
             dynROICell=cell(1,numel(selectedTrack));
@@ -657,6 +699,42 @@ switch funParams.roiType
                 ref=FrameOfRef().setOriginFromTrack(selectedTrack(sIdx)).genCanonicalBase();
                 dynROICell{sIdx}.setDefaultRef(ref);
             end
+        end
+    case 'randomSamplingStatic'
+        dynROICell={};
+        if(~isempty(funParams.detectionProcess))
+            detections=Detections(funParams.detectionProcess.loadChannelOutput(funParams.detectionProcessChannel));
+            N=detections.getCard();
+            if(sum(N)>0)
+                randSelect=arrayfun(@(n) randi([1 n],funParams.nSample,1),N,'unif',0);
+                detections.selectIdx(randSelect);
+                detections(:)=detections(1);
+                tracks=detections.buildTracksFromDetection();
+                dynROICell=arrayfun(@(t) StaticTracksROI(t,funParams.fringe,false),tracks,'unif',0);
+            end
+        end
+        if(~isempty(funParams.trackProcess))
+            trackStruct=funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel);
+            if(~isempty(trackStruct))
+                tracks=TracksHandle(trackStruct);
+                lfts=[tracks.lifetime];
+                if(numel(lfts)>100) % Hack to avoid viewing too much outlier tracks
+                    tracks=tracks((lfts>prctile(lfts,10))&(lfts<(prctile(lfts,90))));
+                end
+                randSelect=randi([1 numel(tracks)],funParams.nSample,1);
+                selectedTrack=tracks(randSelect);
+                dynROICell=cell(1,numel(selectedTrack));
+                for sIdx=1:numel(selectedTrack)
+                    % dynROICell{2*sIdx-1}=TracksROI(selectedTrack(sIdx),20);
+                    dynROICell{sIdx}=StaticTracksROI(selectedTrack(sIdx),funParams.fringe,false);
+                    % ref=FrameOfRef().setOriginFromTrack(selectedTrack(sIdx)).genCanonicalBase();
+                    % dynROICell{sIdx}.setDefaultRef(ref);
+                end
+            else
+                warning('No tracks detected, building a static dynROI');
+                dynROICell={StaticTracksROI([],funParams.fringe,false)};
+            end
+            
         end
     case 'allTracks'
         dynROICell={};
