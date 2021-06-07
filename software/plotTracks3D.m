@@ -314,7 +314,6 @@ switch colorTime
         plot3(axH,tracksXP,tracksYP,tracksZP);
 
     otherwise
-        disp('test')
         %plot tracks with the line color indicated, where missing intervals are
         %indicated by a dotted line
         for i = 1 : trackStartRow(end) + numSegments(end) - 1
