@@ -836,8 +836,13 @@ classdef BuilDynROI < NonSingularProcess
                     end
                 end
                 if(~isempty(funParams.trackProcess))
-                    tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
-                    tracks=tracks([tracks.lifetime]==median([tracks.lifetime]));
+                    trackStruct=funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel);
+                    if(~isempty(trackStruct))                     
+                    tracks=TracksHandle(trackStruct);
+                    lfts=[tracks.lifetime];
+                    if(numel(lfts)>100) % Hack to avoid viewing too much outlier tracks
+                        tracks=tracks((lfts>prctile(lfts,10))&(lfts<(prctile(lfts,90))));
+                    end
                     randSelect=randi([1 numel(tracks)],funParams.nSample,1);
                     selectedTrack=tracks(randSelect);
                     dynROICell=cell(1,numel(selectedTrack));
@@ -847,6 +852,11 @@ classdef BuilDynROI < NonSingularProcess
                         % ref=FrameOfRef().setOriginFromTrack(selectedTrack(sIdx)).genCanonicalBase();
                         % dynROICell{sIdx}.setDefaultRef(ref);
                     end
+                    else
+                        warning('No tracks detected, building a static dynROI');
+                        dynROICell={StaticTracksROI([],funParams.fringe,false)};
+                    end
+
                 end
               case 'allTracks'
                 dynROICell={};

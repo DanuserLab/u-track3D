@@ -133,7 +133,7 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
              daspect([1 1 1]);
 
              colormap(p.colormap);
-             colorbar;
+             % colorbar;
          end
          
 
@@ -497,7 +497,7 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
 
         function obj=setFromTracksIndx(obj,tracks)
             N=max([tracks.endFrame]);
-            pos=cell(1,N)
+            pos=cell(1,N);
             for i=1:length(tracks)
                 tr=tracks(i);
                 fr=tr.f;
@@ -591,12 +591,17 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
 
         function [obj,lifetimeLabels,trackIndices]=getTracksCoord(obj,tracks)
             pos=nan(3,numel(tracks),max([tracks.endFrame]));
+            err=nan(3,numel(tracks),max([tracks.endFrame]));
             lifetime=nan(numel(tracks),max([tracks.endFrame]));
             trackIndices=nan(numel(tracks),max([tracks.endFrame]));
             for tIdx=1:numel(tracks)
                 pos(1,tIdx,tracks(tIdx).f)=tracks(tIdx).x;
                 pos(2,tIdx,tracks(tIdx).f)=tracks(tIdx).y;
                 pos(3,tIdx,tracks(tIdx).f)=tracks(tIdx).z;
+                err(1,tIdx,tracks(tIdx).f)=tracks(tIdx).dx;
+                err(2,tIdx,tracks(tIdx).f)=tracks(tIdx).dy;
+                err(3,tIdx,tracks(tIdx).f)=tracks(tIdx).dz;
+
                 lifetime(tIdx,tracks(tIdx).f)=tracks(tIdx).lifetime;
                 trackIndices(tIdx,tracks(tIdx).f)=tIdx;
             end

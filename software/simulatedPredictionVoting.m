@@ -58,13 +58,17 @@ function [trackabilityCost,sampledPredictions,sampleLabel,votingLabel,trackabili
     voteCell=cell(1,p.sampleNb);
 
     predPos=predStat.stateVec(:,1:probDim);
+    noiseVar=predStat.noiseVar(1:probDim,1:probDim,:);
+    noiseStdV=sqrt([squeeze(noiseVar(1,1,:)) squeeze(noiseVar(2,2,:)) squeeze(noiseVar(3,3,:))]);
 
-    postPredPos=kalmanFilterInfoTmp.stateVec(:,:,propagationScheme);
-    postPredPos=postPredPos(:,1:probDim);
+    % PostPrePos is only used for display purposes, hence we will only keep the first propagation scheme.
+    postPredPos=kalmanFilterInfoTmp.stateVec(:,1:3,1);
     for sIdx=1:p.sampleNb
         %% We are re sampling data pre-propagation to take advantage of u-track modularity
         %% It is less rigorous but enable trackability estimation on all type of cost matrices. 
-        R = mvnrnd(predPos,sqrt(predStat.noiseVar(1:probDim,1:probDim,:)));
+        %R = mvnrnd(predPos,sqrt(noiseVar));
+        R = predPos + (noiseStdV).*randn(size(predPos));
+
         samPredStat=predStat;
         samPredStat.stateVec(:,1:probDim)=R;
         % %%
@@ -78,12 +82,12 @@ function [trackabilityCost,sampledPredictions,sampleLabel,votingLabel,trackabili
                 probDim,prevCostStruct,featLifetime,trackedFeatureIndx,iFrame); % Updated by Carmen Klein Herenbrink and Brian Devree
 
         % Sample post propagation reflected in cost mat
-        samplePostProg=kalmanFilterInfoTmp.stateVec(:,:,propagationScheme);
+        samplePostProg=kalmanFilterInfoTmp.stateVec(:,:,1);
         samplePostProg=samplePostProg(:,1:probDim);
-
+        link12=[];
         if any(costMat(:)~=nonlinkMarker) %if there are potential links
              %link features based on cost matrix, allowing for birth and death
-            [link12,link21] = lap(costMat,nonlinkMarker,0);
+            [link12,~] = lap(costMat,nonlinkMarker,0);
         end
         
         %% Voting: 1 : same vote, 2: other particle 3: new Death
