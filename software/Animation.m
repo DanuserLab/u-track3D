@@ -51,6 +51,27 @@ classdef Animation < hgsetget & matlab.mixin.Copyable & handle
             close(video)
         end
 
+        function saveGif(obj,pathToFile,varargin)
+            ip=inputParser();
+            ip.CaseSensitive = false;
+            ip.KeepUnmatched = true;
+            ip.parse( varargin{:});     
+            p=ip.Results;
+
+            mkdirRobust(fileparts(pathToFile));
+            for fIdx=1:obj.getFrameNb()
+                img=obj.loadView(fIdx);
+                [imind,cm] = rgb2ind(img,256); 
+                % Write to the GIF File 
+                if fIdx == 1 
+                    imwrite(imind,cm,pathToFile,'gif', 'DelayTime',0.1, 'Loopcount',inf); 
+                else 
+                    imwrite(imind,cm,pathToFile,'gif','DelayTime',0.1, 'WriteMode','append'); 
+                end 
+            end
+        end
+
+
         % function imdisp(obj)
         %     imdisp(obj.loadView(1));
         % end

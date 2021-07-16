@@ -58,6 +58,19 @@ classdef CachedAnimation < Animation & CachedSequenceCellCache
     end
 
     end
+    
+    methods(Static)
+        
+        function obj=buildFromRGBCell(RGBCell,outputPath)
+            obj=CachedAnimation(outputPath,numel(RGBCell));
+            mkdirRobust(fileparts(outputPath));
+            for fIdx=1:obj.getFrameNb();
+                obj.saveView(fIdx,RGBCell{fIdx});
+            end
+        end
+    end
+
+
 end
 
 

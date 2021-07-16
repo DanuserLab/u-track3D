@@ -45,6 +45,7 @@ classdef ImAnimation < Animation
         figure();
         imdisp(obj.loadView(1));
     end
+
     function obj=saveView(obj,fIdx,img)
         imwrite(img, sprintfPath(obj.pathTemplate, fIdx), 'Compression', 'none');
     end
@@ -66,6 +67,7 @@ end
             obj.saveView(fIdx,img);
         end
     end
+
 end
 end
 

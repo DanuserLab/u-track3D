@@ -82,7 +82,7 @@ function projImages=overlayProjTracksMovie(processProj,varargin)
       ref=refDecim;
     end
     if(~isempty(ref))
-    tracks=ref.applyBase(tracks,'');
+        tracks=ref.applyBase(tracks,'');
     end
     projData=processProj;
   % catch
