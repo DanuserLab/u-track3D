@@ -51,7 +51,7 @@ paramsIn = ip.Results.paramsIn;
 % Get MovieData object and Process
 [movieData, thisProc] = getOwnerAndProcess(movieDataOrProcess, 'BuildDynROIProcess', true);
 p = parseProcessParams(thisProc, paramsIn); % If parameters are explicitly given, they should be used
-% rather than the one stored in RenderFullMIPProcess
+% rather than the one stored in BuildDynROIProcess
 
 % Parameters: funParams = p;
 
