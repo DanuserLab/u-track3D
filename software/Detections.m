@@ -498,6 +498,8 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
         function obj=setFromTracksIndx(obj,tracks)
             N=max([tracks.endFrame]);
             pos=cell(1,N);
+            err=cell(1,N);
+
             for i=1:length(tracks)
                 tr=tracks(i);
                 fr=tr.f;
@@ -505,12 +507,14 @@ classdef Detections <  handle  & matlab.mixin.Copyable & dynamicprops
                 nzIdx = featIdx ~= 0;
                 nzIdx = find(nzIdx(:));
                 P=[tr.x' tr.y' tr.z'];
+                E=[tr.dx' tr.dy' tr.dz'];
                 for pIdx=nzIdx'
                         pos{fr(pIdx)}(featIdx(pIdx),:)=P(pIdx,:);
+                        err{fr(pIdx)}(featIdx(pIdx),:)=E(pIdx,:);
                 end
             end
  
-            obj=obj.initFromPosMatrices(pos,pos);
+            obj=obj.initFromPosMatrices(pos,err);
         end
         
         function ret=is3D(obj)
