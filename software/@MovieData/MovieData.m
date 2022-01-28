@@ -3,7 +3,7 @@ classdef  MovieData < MovieObject & matlab.mixin.Heterogeneous
     %
     % See also MovieData.MovieData
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

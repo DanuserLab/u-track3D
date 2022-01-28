@@ -44,7 +44,7 @@ function gapDetections=collectTrackSOE(tracks)
     posCell=arrayfun(@(f) pos(:,~isnan(pos(1,:,f)),f)',1:max([tracks.endFrame]),'unif',0);
     gapDetections=Detections().initFromPosMatrices(posCell,posCell);
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

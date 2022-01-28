@@ -19,7 +19,7 @@ normManifVector=norm(manifVector);
 %% reduce the number of point with KDTree
 %% WARNING: we exclude the full sphere!
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

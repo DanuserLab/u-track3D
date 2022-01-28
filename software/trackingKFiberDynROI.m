@@ -2,7 +2,7 @@
 % Reproduce Figure 2.j-m. of Roudot et. al "u-track 3D: measuring and interrogating
 % intracellular dynamics in three dimensions" 2020
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

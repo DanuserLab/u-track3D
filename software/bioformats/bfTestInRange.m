@@ -5,7 +5,7 @@ function test = bfTestInRange(x,name,maxValue)
 % This should be faster than ismember(x, 1:maxValue) while also producing
 % more readable errors.
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

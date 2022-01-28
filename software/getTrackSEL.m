@@ -70,7 +70,7 @@ function trackSEL = getTrackSEL(trackedFeatureInfo,segmentSEL)
 %
 %Khuloud Jaqaman, August 2006
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

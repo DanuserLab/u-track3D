@@ -16,7 +16,7 @@ maxInt=p.maxInt;
 ScaledZ=ceil(size(vol,3)*ZXRatio);
 % find the maximum intensity projections
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

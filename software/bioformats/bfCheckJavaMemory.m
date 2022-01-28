@@ -12,7 +12,7 @@ function [] = bfCheckJavaMemory(varargin)
 %
 %    A warning message is printed if too little memory is allocated.
 %
-% Copyright (C) 2021, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 
