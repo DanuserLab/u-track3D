@@ -127,8 +127,13 @@ classdef  BioFormatsReader < Reader
         
         function channelNames = getChannelNames(obj, iChan)
             usedFiles = obj.getReader().getUsedFiles();
-            [~, fileName, fileExt] = fileparts(char(usedFiles(1)));
-            base = [fileName fileExt];
+%             [~, fileName, fileExt] = fileparts(char(usedFiles(1)));
+%             base = [fileName fileExt];
+% Edit getChannelNames to be full path to keep it consistent with
+% TiffSeriesReader.getChannelNames, and fixed MovieData.getChannelPaths for
+% BioFormatsReader. - Qiongjing (Jenny) Zou, Apr 2022
+            [filePath, fileName, fileExt] = fileparts(char(usedFiles(1)));
+            base = fullfile(filePath, [fileName fileExt]);
             if obj.getReader().getSeriesCount() > 1
                 base = [base ' Series ' num2str(obj.getSeries()+1)];
             end
