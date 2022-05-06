@@ -205,7 +205,6 @@ for fIdxIdx=1:numel(processFrames)
       fColorIndx=fColorIndx(edgesLabel(tailIndx));
     end
     assert(numel(fColorIndx)==size(edges,1));
-
     [tracksXY,tracksZY,tracksZX]=overlayProjGraph(XYProj,ZYProj,ZXProj, ...
       xBound,yBound,zBound,vert,edges, ... 
       myColormap,fColorIndx,'positionsLabel',positionsLabel,varargin{:});

@@ -33,7 +33,8 @@ classdef PointSourceDetectionProcess3D < DetectionProcess & NonSingularProcess
                 super_args{1} = owner;
                 super_args{2} = PointSourceDetectionProcess3D.getName;
                 super_args{3} = @detectMoviePointSources3D;
-                
+          
+      
                 if nargin < 3 || isempty(funParams)  % Default funParams
                     if nargin <2, outputDir = owner.outputDirectory_; end
                     funParams = PointSourceDetectionProcess3D.getDefaultParams(owner,outputDir);

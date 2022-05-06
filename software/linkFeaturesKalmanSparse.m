@@ -184,6 +184,9 @@ ip = inputParser;
 ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
 ip.addParameter('estimateTrackability',false);
+ip.addParameter('fixKalmanVariable',false); %  Optionally fix the Kalman variable to
+                                            %  the inititialization values.  Only for
+                                            %  experimental purpose. 
 ip.parse(varargin{:});
 p=ip.Results;
 
@@ -640,6 +643,15 @@ for iFrame = 1 : numFrames-1
 
     end %(if numFeaturesFrame1 ~= 0 ... else ...)
 
+    
+    if(p.fixKalmanVariable)
+        eval(['[filterInit,errFlag] = ' kalmanFunctions.initialize ...
+              '(movieInfo(iFrame+1),probDim,costMatParam);'])
+        kalmanFilterInfo(iFrame+1).stateVec = filterInit.stateVec;
+        kalmanFilterInfo(iFrame+1).stateCov = filterInit.stateCov;
+        kalmanFilterInfo(iFrame+1).noiseVar = filterInit.noiseVar;
+    end
+    
     %update structure of previous costs
     prevCostStruct.all = prevCost;
     prevCostStruct.max = max([prevCostStruct.max; prevCost(:,end)]);

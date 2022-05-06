@@ -27,7 +27,7 @@ ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
 ip.addOptional('linewidth',2);
 ip.addOptional('positionsLabel',{});   % position associated label (none if empty)
-ip.addOptional('showVertex',[]);
+ip.addOptional('showVertex',false);
 ip.addOptional('radius',5);
 ip.parse(varargin{:});
 p=ip.Results;

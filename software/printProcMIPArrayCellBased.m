@@ -23,7 +23,7 @@
 ip = inputParser;
 ip.KeepUnmatched = true;
 ip.addRequired('processCellArray',(@(pr) isa(pr,'cell')&&(ndims(pr)==2)));
-ip.addOptional('savePath','/tmp/printProcMIPArrayCellBased/',@ischar);
+ip.addParamValue('savePath','/tmp/printProcMIPArrayCellBased/',@ischar);
 ip.addParamValue('maxWidth',1600,@isnumeric);
 ip.addParamValue('maxHeight',1000,@isnumeric);
 ip.addParamValue('MIPSize',400,(@(x) isnumeric(x)||strcmp(x,'auto'))); % Max size of each rendering. If set to Auto, use the array arrangement of processCellArray and maxWidth/maxHeight to define Size.
