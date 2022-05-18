@@ -69,11 +69,11 @@ if isa(pointSourceDetProc3D, 'PointSourceDetectionProcess3DDynROI')
 end
 
 %% --------------- Initialization ---------------%%
-if feature('ShowFigureWindows')
-    wtBar = waitbar(0,'Initializing...','Name',pointSourceDetProc3D.getName());
-else
-    wtBar=-1;
-end
+% if feature('ShowFigureWindows')
+%     wtBar = waitbar(0,'Initializing...','Name',pointSourceDetProc3D.getName());
+% else
+%     wtBar=-1;
+% end
 
 % Reading various constants
 nFrames = movieData.nFrames_;
@@ -477,7 +477,7 @@ for i = 1:numel(p.ChannelIndex)
 end %%% channel loop
 
 % Close waitbar
-if ishandle(wtBar), close(wtBar); end
+% if ishandle(wtBar), close(wtBar); end
 disp('Finished detecting diffraction-limited objects!')
 movieData.save;
 
