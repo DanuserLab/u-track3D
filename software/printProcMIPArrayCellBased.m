@@ -37,6 +37,10 @@ ip.addParamValue('printFrame',[],@isnumeric);
 ip.parse(processCellArray,varargin{:});
 p=ip.Results;
 
+disp('::::')
+disp('Building Montage');
+
+
 MIPSize=p.MIPSize;
 nProcess=numel(processCellArray);
 

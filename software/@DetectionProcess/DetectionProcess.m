@@ -112,10 +112,17 @@ classdef DetectionProcess < ImageAnalysisProcess
                 detLabel=p.detLabel;
             end
 
+            disp('::::')
+            disp('Overlaying Detections');
+
             for rIdx=1:numel(overlayCell)
                 myColormap=256*jet(256);
-                overlayProjDetectionMovie(displayProjs{rIdx},'detections',oDetections, 'process',overlayCell{rIdx}, ... 
-                    'colorLabel',detLabel,'cumulative',false,'colormap',myColormap,'radius',2,'detectionBorderDisplay',1.5,varargin{:}); 
+
+                overlayProjDetectionMovie(displayProjs{rIdx},'detections',oDetections, ...
+                                          'process',overlayCell{rIdx}, 'colorLabel', ...
+                                          detLabel,'cumulative',false,'colormap', ...
+                                          myColormap,'radius',2, ...
+                                          'detectionBorderDisplay',1.5,varargin{:}); 
                 if(p.show)
                     overlayCell{rIdx}.cachedOrtho.imdisp();
                     drawnow;

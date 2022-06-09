@@ -98,7 +98,7 @@ for i = p.ChannelIndex
         outFilePaths{4,i} = [p.OutputDirectory filesep outFilename '_DynROIRef.mat'];
     end
 end
-mkClrDir(p.OutputDirectory);
+mkClrDir(p.OutputDirectory,0);
 trackProc.setOutFilePaths(outFilePaths);
 
 
@@ -107,7 +107,10 @@ trackProc.setOutFilePaths(outFilePaths);
 
 %% --------------- Displacement field calculation ---------------%%% 
 
-disp('Starting tracking...')
+disp('::::')
+logMsg = @(chan) ['Tracking objects for channel ' ...
+                  num2str(chan) ' under:'];
+detDirs= detProc.outFilePaths_;
 
 for i = p.ChannelIndex
 
@@ -160,6 +163,12 @@ for i = p.ChannelIndex
         movieInfo=mappedDetectionsRef.getStruct();
     end
 
+    disp(logMsg(i))
+    disp(detDirs{1,i});
+    disp('Results will be saved under:')
+    disp(outFilePaths{1,i});
+
+
     % Call function - return tracksFinal for reuse in the export
     % feature
     if movieData.is3D
@@ -169,6 +178,9 @@ for i = p.ChannelIndex
         tracksFinal = trackCloseGapsKalmanSparse(movieInfo, p.costMatrices, p.gapCloseParam,...
         p.kalmanFunctions, p.probDim, 0, p.verbose);
     end
+    
+
+
 
     if movieData.is3D && (~isempty(p.processBuildDynROI))
         %% replace the trajectory with original detections

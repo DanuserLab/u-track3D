@@ -162,7 +162,7 @@ for i = p.ChannelIndex;
         outFilePaths{2,i} = [p.OutputDirectory filesep 'channel_DynROIRef' num2str(i) '.mat'];
     end
 end
-mkClrDir(p.OutputDirectory);
+mkClrDir(p.OutputDirectory,0);
 pointSourceDetProc3D.setOutFilePaths(outFilePaths);
 
 %Get ROI mask if any.
@@ -175,8 +175,9 @@ pointSourceDetProc3D.setOutFilePaths(outFilePaths);
 
 %% --------------- Point source detection ---------------%%% 
 
-disp('Starting detecting diffraction-limited objects');
-logMsg = @(chan) ['Please wait, detecting diffraction-limited objects for channel ' num2str(chan)];
+disp('::::')
+logMsg = @(chan) ['Detecting diffraction-limited objects for channel ' ...
+                  num2str(chan) ' under:'];
 timeMsg = @(t) ['\nEstimated time remaining: ' num2str(round(t)) 's'];
 tic;
 nChan = length(p.ChannelIndex);
@@ -229,7 +230,9 @@ for i = 1:numel(p.ChannelIndex)
             volList=[volList {double(movieData.getChannel(iChan).loadStack(fIdx))}];
         end
         sigmasPSF=getGaussianPSFsigmaFrom3DData(volList,'Display',logical(p.showAll));
+        if(detP.verbosity>1)
         arrayfun(@(x) disp(['Estimed scales: ' num2str(x)]), sigmasPSF);
+        end
     else
         sigmasPSF = detP.filterSigma;
     end
@@ -237,7 +240,9 @@ for i = 1:numel(p.ChannelIndex)
     parfor frameIdx = 1:length(processFrames)    
                 
         timePoint = processFrames(frameIdx);
+        if(detP.verbosity>1)
         disp(['Processing time point ' num2str(frameIdx,'%04.f')])
+        end
         
         % loading the entire stack
         detP_pf = detP;
@@ -250,6 +255,7 @@ for i = 1:numel(p.ChannelIndex)
         % If a DynROI is specified and this dynROI has not been swapped, 
         % crop the associated volume (non-isotropic)
         minCoord=[];
+        ROI=[];
         if(~isempty(detP.processBuildDynROI)&&~(detP.processBuildDynROI.isSwaped()))
             tmp=detP.processBuildDynROI.loadFileOrCache(); % try initDynROIs
             dynROICell=tmp{1}.dynROICell;

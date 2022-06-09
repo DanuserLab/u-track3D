@@ -111,6 +111,7 @@ classdef PointSourceDetectionProcess3DDynROI < PointSourceDetectionProcess3D
             % funParams.scales=[2:0.5:4];
             funParams.scales=[1.25:0.5:2.25]; % Change the default for NewUtrack3DPackage, on 2020-11-25
             funParams.version='';
+            funParams.verbosity=1; % New param added 2022-05
             
 
 

@@ -169,7 +169,9 @@ classdef TrackingProcess < DataProcessingProcess & NonSingularProcess
                 trackDetLabel=trackabilityData.votingLabel;
                 radii=0.5;  
             end
-
+            disp('::::')
+            disp('Overlaying tracks');
+            
             for rIdx=1:numel(overlayCell)
                 myColormap=256*parula(256);
                 tracksCopy=tracks.copy();
