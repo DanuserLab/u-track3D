@@ -1,0 +1,70 @@
+function [ deltaT ] = getDeltaT( bfReader, c, t, z)
+%getDeltaT Utility to the time elapsed since first image for a MovieData
+%object
+%
+% INPUT
+% bfReader - A Bioformats reader
+% c - channel (optional)
+% t - time point (optional)
+% z - z-plane (optional)
+%
+% OUTPUT
+% deltaT since start of image collection in a 3D matrix CxTxZ
+%
+% Mark Kittisopikul, May 2017
+
+% if(nargin == 0)
+%     % Invoke GUI to load movie
+%     MD = MovieData.load();
+% end
+
+% bfReader = MD.getReader();
+metadata = bfReader.getMetadataStore();
+series = bfReader.getSeries();
+
+
+
+if(nargin > 3)
+    % Get deltaT for specific plane
+    deltaT = getDeltaTatCTZ(bfReader,metadata,series,c,t,z);
+elseif(nargin > 2)
+    % Get deltaT for Z-stack in c,t
+    deltaT = zeros(1,1,bfReader.getSizeZ());
+    for z = 1:bfReader.getSizeZ()
+        deltaT(1,1,z) = getDeltaTatCTZ(bfReader,metadata,series,c,t,z);
+    end
+elseif(nargin > 1)
+    % Get deltaT for TxZ stack for channel c
+    deltaT = zeros(1,bfReader.getSizeT(),bfReader.getSizeZ());
+    for t = 1:bfReader.getSizeT()
+        for z = 1:bfReader.getSizeZ()
+            deltaT(1,t,z) = getDeltaTatCTZ(bfReader,metadata,series,c,t,z);
+        end
+    end
+else
+    % Get all deltaT at CxTxZ
+    deltaT = zeros(bfReader.getSizeC(),bfReader.getSizeT(),bfReader.getSizeZ());
+    for c = 1:bfReader.getSizeC()
+        for t = 1:bfReader.getSizeT()
+            for z = 1:bfReader.getSizeZ()
+                deltaT(c,t,z) = getDeltaTatCTZ(bfReader,metadata,series,c,t,z);
+            end
+        end
+    end
+end
+
+
+
+end
+
+function deltaT = getDeltaTatCTZ(bfReader,metadata,series,c,t,z)
+% Get deltaT at a specific c,t,z
+    try
+        javaPlaneIndex = bfReader.getReader().getIndex(z - 1, c - 1, t - 1);
+        time = metadata.getPlaneDeltaT(series,javaPlaneIndex);
+        deltaT = double(time.value());
+    catch err
+        deltaT = NaN;
+    end
+end
+
