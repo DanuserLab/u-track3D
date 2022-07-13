@@ -8,7 +8,6 @@ function [pos,labelSeg,energyMap]=multiscaleStochasticFiltering(vol,XZRatio,vara
     ip.addParameter('RemoveRedundant',false);
     ip.addParameter('RedundancyRadius',0.5);
     ip.addParameter('version','');
-    ip.addParameter('verbosity',1);
     ip.addParameter('alpha',0.05);
     ip.addParameter('deepakImplementation',false);
     ip.parse(varargin{:});
@@ -44,17 +43,14 @@ scales=p.scales;
 % scales=[1.2:0.1:8];
 
 %% Preallocate Cell Arrays and Measure Response in Parallel
-if(p.verbosity>1)
 disp('computing scales');tic;
-end
 masks=cell(1,length(scales));
 scaledLoGs=cell(1,length(scales));
 imScaledMaps=cell(1,length(scales));
 sampleTestMap=~isempty(p.samplePos);
 testMaps=cell(1,length(scales));
 parfor sIdx=1:length(scales)
-    [mask, imgLM, imgLoG,imgLoGScales,testMap]=pointSourceStochasticFiltering(vol,[scales(sIdx) ...
-                        XZRatio*scales(sIdx)],'Alpha',p.alpha);
+    [mask, imgLM, imgLoG,imgLoGScales,testMap]=pointSourceStochasticFiltering(vol,[scales(sIdx) XZRatio*scales(sIdx)],'Alpha',p.alpha);
     masks{sIdx}=mask;
 
     if(p.deepakImplementation)
@@ -77,9 +73,7 @@ parfor sIdx=1:length(scales)
     testMaps{sIdx}=testMap;
     end
 end
-if(p.verbosity>1)
 toc;
-end
 
 
 scaleSpace=cat(4,scaledLoGs{:});
@@ -106,6 +100,7 @@ switch p.version
         energyMap=maxResponseMap;
         energyMap(voteMap==0)=0;
         % energyMap(maxResponseScale==numel(scales))=0;
+
     case 'useMaxResponseAndVote'
         energyMap=maxResponseMap.*voteMap;
         energyMap(voteMap==1)=0;
@@ -220,9 +215,7 @@ end
 
 
 
-if(p.verbosity>1)
 toc;
-end
 
 
 

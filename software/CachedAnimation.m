@@ -45,10 +45,6 @@ classdef CachedAnimation < Animation & CachedSequenceCellCache
     end
 
     function aImAnimation=printAnimation(obj,outputPath)
-        disp('::::')
-        disp('Exporting as png images under:');
-        disp(outputPath)                
-
         aImAnimation=ImAnimation([outputPath 'frame_%04d.png'],obj.getFrameNb());
         mkdirRobust(fileparts(aImAnimation.pathTemplate));
         for fIdx=1:aImAnimation.getFrameNb();

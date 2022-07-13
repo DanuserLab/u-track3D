@@ -89,7 +89,6 @@ classdef BuilDynROI < NonSingularProcess
             ip =inputParser;
             ip.CaseSensitive = false;
             ip.KeepUnmatched = true;
-            ip.PartialMatching = false;
             ip.addOptional('displayProjsProcess',obj.getOwner().searchProcessName('RenderDynROI'),@(x) isa(x,'RenderDynROI')||isa(x,'cell'));
             ip.addParameter('output','movieInfo',@ischar);
             ip.addParameter('show',true,@islogical);
@@ -128,6 +127,8 @@ classdef BuilDynROI < NonSingularProcess
                 gc=cell(1,obj.getOwner().nFrames_);
                 dR=dynROICell{dIdx};
                 ref=dR.getDefaultRef();
+                disp(['Min ref: ' num2str(min(ref.frame))]);
+                disp(['Max ref: ' num2str(max(ref.frame))]);
                 frameRange=1:obj.getOwner().nFrames_;
                 try
                     if(funParams.lifetimeOnly)
@@ -209,16 +210,6 @@ classdef BuilDynROI < NonSingularProcess
         function name = runFunction(process)
             funParams=process.funParams_;
 
-            disp('::::')
-            if(~isempty(funParams.trackProcess))
-                disp(['Estimating a dynROI with type ' funParams.roiType ' from tracks under']);
-                disp(funParams.trackProcess.outFilePaths_{funParams.trackProcessChannel});
-            else
-                disp(['Estimating a dynROI with type ' funParams.roiType ' from track objects']);
-            end; 
-
-            
-            
             switch funParams.roiType
               case 'spindle'
                 disp('Fiducials for mitosis');tic;
@@ -545,7 +536,7 @@ classdef BuilDynROI < NonSingularProcess
                 %         hold on;
                 % end
 
-              case {'trackSetStable','fitTrackSetFrameByFrame','trackSetROI'}
+              case {'trackSetStable','fitTrackSetFrameByFrame'}
                 %% Use tracks if necessary
                 if(isempty(funParams.trackObjects))
                     tracks=TracksHandle(funParams.trackProcess.loadChannelOutput(funParams.trackProcessChannel));
@@ -779,7 +770,7 @@ classdef BuilDynROI < NonSingularProcess
                     tracks=funParams.trackObjects;
                 end
                 
-                %% Smaller Conical ROIs used for context 
+                %% Smaller Conical ROIs used for context (TODO replace with statistical model in the context ROI)
                 angle=funParams.angle;
                 dynROICell=cell(numel(tracks{1}),numel(tracks{2}));
                 for cIdx=1:numel(tracks{1})
@@ -852,15 +843,14 @@ classdef BuilDynROI < NonSingularProcess
                     if(numel(lfts)>100) % Hack to avoid viewing too much outlier tracks
                         tracks=tracks((lfts>prctile(lfts,10))&(lfts<(prctile(lfts,90))));
                     end
-                    
                     randSelect=randi([1 numel(tracks)],funParams.nSample,1);
                     selectedTrack=tracks(randSelect);
                     dynROICell=cell(1,numel(selectedTrack));
                     for sIdx=1:numel(selectedTrack)
-                        % dynROICell{tIdx}=StaticTracksROI(tracks(tIdx),funParams.fringe,funParams.lifetimeOnly);
-                        dynROICell{sIdx}=StaticTracksROI(selectedTrack(sIdx), ... 
-                                                         funParams.fringe,... 
-                                                         funParams.lifetimeOnly);
+                        % dynROICell{2*sIdx-1}=TracksROI(selectedTrack(sIdx),20);
+                        dynROICell{sIdx}=StaticTracksROI(selectedTrack(sIdx),funParams.fringe,false);
+                        % ref=FrameOfRef().setOriginFromTrack(selectedTrack(sIdx)).genCanonicalBase();
+                        % dynROICell{sIdx}.setDefaultRef(ref);
                     end
                     else
                         warning('No tracks detected, building a static dynROI');
@@ -902,10 +892,6 @@ classdef BuilDynROI < NonSingularProcess
             funParams.trackObjects=[];
             funParams.detectionsObject=[];
             process.setPara(funParams);
-
-            disp('Results will be saved under:')
-            disp(process.outFilePaths_{1,1});
-
         end
         
         function funParams = getDefaultParams(owner)

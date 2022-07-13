@@ -240,7 +240,7 @@ classdef PointSourceDetectionProcess3D < DetectionProcess & NonSingularProcess
             funParams.debug=false;
             % funParams.scales=[2:0.5:4];
             funParams.scales=[1.25:0.5:2.25]; % Change the default for NewUtrack3DPackage, on 2020-11-25
-            funParams.version='useMaxResponse';
+            funParams.version='';
             funParams.verbosity=1;
             
             % DetectComets3D & watershed params

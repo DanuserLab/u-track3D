@@ -39,10 +39,6 @@ classdef Animation < hgsetget & matlab.mixin.Copyable & handle
             ip.parse( varargin{:});
             p=ip.Results;
 
-            disp('::::')
-            disp('Exporting as a video file under:');
-            disp(pathToVideoFile)
-
             mkdirRobust(fileparts(pathToVideoFile));
             video = VideoWriter(pathToVideoFile);
             video.FrameRate =p.frameRate;  % Default 30
@@ -62,10 +58,6 @@ classdef Animation < hgsetget & matlab.mixin.Copyable & handle
             ip.parse( varargin{:});     
             p=ip.Results;
 
-            disp('::::')
-            disp('Exporting as a gif animation under:');
-            disp(pathToFile)
-            
             mkdirRobust(fileparts(pathToFile));
             for fIdx=1:obj.getFrameNb()
                 img=obj.loadView(fIdx);

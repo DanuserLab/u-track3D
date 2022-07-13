@@ -2,7 +2,6 @@ function overlayProjGraphMovie(processProj,positions,edgesCell,varargin)
 ip = inputParser;
 ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
-ip.PartialMatching = false;
 ip.addRequired('processProj');
 ip.addOptional('positions',[],@(x) isa(x,'Detections')); 
 ip.addOptional('edgesCell',[],(@(x) iscell(x)||isempty(x))); %% size(edgesCell{1}) == Nx2
