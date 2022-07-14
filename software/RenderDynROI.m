@@ -118,6 +118,17 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
 
             renderFrames=funParams.renderFrames;
 
+            disp('::::')
+            if(isempty(funParams.processBuildDynROI))
+                disp(['Rendering orthogonal maximum intensity projections']);
+            else
+                disp(['Rendering orthogonal maximum intensity projections for dynROI ' ...
+                      funParams.processBuildDynROI.getProcessTag()]);
+            end 
+            
+            
+
+
             dynROISampleIdx=1:numel(dynROICell);
             dynROISampleIdx=dynROISampleIdx(1:min(funParams.dynROIRenderingSamplingNumber,end));
             for rIdx=dynROISampleIdx
@@ -131,9 +142,15 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                 if(funParams.V2)
                     MIPS=cell(numel(funParams.processChannel),3,numel(renderFrames));
                     if(isempty(funParams.swappedRenderDynROI))
-                        processProj=ProjectDynROIProcess(process.getOwner(),[process.tag_ '-roi-' num2str(rIdx)]);
-        
-                        disp('build MIP');tic;
+                        processProj=ProjectDynROIProcess(process.getOwner(),[process.tag_ ...
+                                            '-roi-' num2str(rIdx)]);
+                        
+                       
+                         
+                        if(funParams.verbosity>1)
+                            disp('build MIP');tic;
+                        end
+                        
                         minCoord=[];
                         maxCoord=[];
                         for cIdxIdx=1:numel(funParams.processChannel)
@@ -141,12 +158,18 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                             [MIPS(cIdxIdx,1,:),MIPS(cIdxIdx,2,:),MIPS(cIdxIdx,3,:),minCoord,maxCoord]= ... 
                             dynROI.getMIP(MD,cIdx,renderFrames);
                         end
-                        toc;
+                        if(funParams.verbosity>1)
+                            toc;                            
+                        end
+                            
 
                         if(funParams.debug) figure(); imdisp(MIPS{1,1,1}); drawnow; end;
 
                         % store raw MIPS
-                        disp('Store raw mips');tic;
+                        if(funParams.verbosity>1)
+                            disp('Store raw mips');tic;
+                        end
+                        
                         set(processProj,'ref',dynROI.getDefaultRef());
                         set(processProj,'nFrames',numel(renderFrames));
                         processProj.setBoundingBox( ...
@@ -159,9 +182,15 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                                 processProj.saveFrame(cIdx,fIdx,MIPS{cIdxIdx,1,fIdx},MIPS{cIdxIdx,2,fIdx},MIPS{cIdxIdx,3,fIdx});
                             end
                         end
-                        toc;
+                        if(funParams.verbosity>1)
+                            toc;                            
+                        end
+                            
                     else
-                        disp('Loading mips');tic;
+                        if(funParams.verbosity>1)
+                            disp('Loading mips');tic;
+                        end
+                        
                         tmp=funParams.swappedRenderDynROI.loadFileOrCache();
                         processProjectionsCell=tmp{1}.processProjectionsCell;
                         processProj=processProjectionsCell{rIdx};
@@ -174,13 +203,30 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                         [minmaxXBorder, minmaxYBorder,minmaxZBorder]=processProj.getBoundingBox();
                         minCoord=[minmaxXBorder(1),minmaxYBorder(1),minmaxZBorder(1)];
                         maxCoord=[minmaxXBorder(2),minmaxYBorder(2),minmaxZBorder(2)];
-                        toc;
+                        if(funParams.verbosity>1)
+                            toc;
+                        end
+
                     end
 
                     %% Adjust contrast
-                    disp('Adjust contrast');tic;
+                    if(funParams.verbosity>1)
+                        disp('Adjust contrast');tic;
+                    end
+                    
                     contrastOut=funParams.contrastOut;
                     contrastIn=funParams.contrastIn;
+                    if((~isempty(contrastIn)|(~isempty(contrastOut)))&(~ ...
+                                                                       isempty(funParams.contrast)))
+                        warning (['contrastIn and contrastOut are deprecated, overidden ' ...
+                                  'by contrast']);
+                    end
+                    contrast=funParams.contrast;
+                    if(isempty(contrast))
+                        contrast=[0 1]; 
+                    end 
+                    contrastIn=contrast;
+
                     gamma=funParams.gamma;
                     if(~iscell(contrastOut)) 
                         contrastOut=arrayfun(@(i) contrastOut,1:numel(funParams.processChannel),'unif',0); 
@@ -214,10 +260,16 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                         end
                     end
 
-                    toc;
+                    if(funParams.verbosity>1)
+                        toc;                        
+                    end
+                        
                     if(funParams.debug) figure(); imdisp(MIPS{1,1,1}); drawnow; end;
 
-                    disp('Fuse in the case of two channels');
+                    if(funParams.verbosity>1)
+                        disp('Fuse in the case of two channels');
+                    end
+                    
                     finalMIP=cell(3,numel(renderFrames));
                     if(numel(funParams.processChannel)==2)
                         for fIdx=renderFrames
@@ -243,7 +295,10 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                        finalMIP{fIdx} =imresize(finalMIP{fIdx} ,resizeScale,'nearest');
                     end
 
-                    disp('Store rendered MIPS');tic;
+                    if(funParams.verbosity>1)
+                        disp('Store rendered MIPS');tic;
+                    end
+                    
                     renderer=ProjectDynROIRendering(processProj,'stereo');
                     renderer.ZRight=funParams.ZRight;
                     renderer.Zup=funParams.Zup;
@@ -260,7 +315,10 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                             renderer.saveFrame(1,fIdx,finalMIP{1,fIdx},finalMIP{2,fIdx},finalMIP{3,fIdx});
                         end
                     end
-                    toc;
+                    if(funParams.verbosity>1)
+                        toc;                        
+                    end
+                        
                     renderer.swapCache();
 
                 else
@@ -296,9 +354,11 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
                 processProjectionCell{rIdx}=processProj;
                 processRenderCell{rIdx}=renderer;
             end
-            tic;
             process.saveOutput(processProjectionCell,processRenderCell);
-            disp('save output');toc;
+            if(funParams.verbosity>1)
+                disp('save output');
+            end
+            
         end
 
         
@@ -329,8 +389,9 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
             %% 3) Parameter that may not make sense as a "setting" but maybe
             %% in the "results" section
             funParams.gamma=1;
-            funParams.contrastIn=[0 1];
-            funParams.contrastOut=[0 1];
+            funParams.contrast=[];
+            funParams.contrastIn=[];  %  Deprecated
+            funParams.contrastOut=[]; %  Deprecated
             funParams.normalize=true;
             % The class output two types of image:  1) The raw mips, or 2) the
             % blended channels view that is only used for script and that are
@@ -366,6 +427,7 @@ classdef RenderDynROI < NonSingularProcess % & ComputeMIPProcess
             funParams.Zup=false;
             funParams.intMinPrctil=[1 1];
             funParams.intMaxPrctil=[100 100];
+            funParams.verbosity=1;
         end
     end
 end

@@ -2,6 +2,7 @@ function keptIdx=overlayProjDetectionMovie(processProj,varargin)
 ip = inputParser;
 ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
+ip.PartialMatching = false;
 ip.addRequired('processProj');
 ip.addOptional('detections',[]);
 ip.addOptional('colormap',[]);
@@ -60,10 +61,6 @@ if(isa(processProj,'ExternalProcess'))
   processProj=processProjDynROI;
 end
 
-
-Z=detections.getAllStruct().z;
-disp(['Z range from ' num2str(min(Z)) ' to ' num2str(max(Z)) ' at ' num2str(max(Z)-min(Z))]);
-
 ref=get(processProj,'ref');
 if(~isempty(ref))
     % Ugly hack to fix lack of detection frameID support
@@ -75,18 +72,12 @@ if(~isempty(ref))
         D(p.detectionFrameIdx)=detections;
         detections=D;
     end    
-    detections=ref.applyBase(detections,'')
+    detections=ref.applyBase(detections,'');
     if(~isempty(p.detectionFrameIdx))
         detections=detections(p.detectionFrameIdx);
     end    
 end
 projData=processProj;
-
-
-Z=detections.getAllStruct().z;
-disp(['Z range from ' num2str(min(Z)) ' to ' num2str(max(Z)) ' at ' num2str(max(Z)-min(Z))]);
-
-
 frameNb=min([projData.frameNb,length(detections)]);
 processFrames=p.processFrames;
 if(isempty(processFrames))

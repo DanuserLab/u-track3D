@@ -25,6 +25,7 @@ function rgbImg=graphBinaryOverlay(img,XLimit,YLimit,positions,edges,colorIndex,
 ip = inputParser;
 ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
+ip.PartialMatching = false; 
 ip.addOptional('linewidth',2);
 ip.addOptional('positionsLabel',{});   % position associated label (none if empty)
 ip.addOptional('showVertex',false);

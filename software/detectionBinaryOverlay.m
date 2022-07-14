@@ -124,7 +124,7 @@ if(~isempty(detections))
 %                 xlim(XLimit);
 %                 ylim(YLimit);
                 A=radius.^2;
-                scatter(X,Y,A,colormap(cIndex,:))
+                scatter(X,Y,A,colormap(cIndex,:));
 %                 uniqueCIdx=unique(cIndex);
 %                 for ucIdx=1:length(uniqueCIdx)
 %                     cIdx=uniqueCIdx(ucIdx)

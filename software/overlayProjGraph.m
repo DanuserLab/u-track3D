@@ -2,6 +2,7 @@ function [tracksXY,tracksZY,tracksZX]=overlayProjGraph(XYProj,ZYProj,ZXProj,XLim
 ip = inputParser;
 ip.CaseSensitive = false;
 ip.KeepUnmatched = true;
+ip.PartialMatching = false;
 ip.addOptional('cumulative',false);
 ip.addOptional('detectionBorderDisplay',0);
 ip.addParameter('showROIOnly',true); % show only the edges with a vertice that belong to the ROI.

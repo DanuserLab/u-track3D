@@ -81,7 +81,6 @@ classdef FrameOfRef < handle  & matlab.mixin.Copyable
               obj.X=obj.X./repmat(sum(obj.X.^2,2).^0.5,1,3);
           end
           obj.Y=cross(obj.Z,obj.X);
-          obj
       end
 
       function obj=selectFrame(obj,selectFrameIdx)

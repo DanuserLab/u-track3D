@@ -75,8 +75,6 @@ function projImages=overlayProjTracksMovie(processProj,varargin)
     ref=get(processProj,'ref');
     if(~isempty(ref)&&~isempty(detFrame))
       refDecim=copy(ref);
-      detFrame
-      ref
       refDecim=refDecim.selectFrame(detFrame);
       refDecim.frame=1:numel(refDecim.frame);
       ref=refDecim;
@@ -119,8 +117,8 @@ if(~isempty(p.colorLabel))
   end
 
    if(isempty(p.minMaxLabel))
-     minLabel=min(allLabel)
-     maxLabel=max(allLabel)
+     minLabel=min(allLabel); 
+     maxLabel=max(allLabel);
    else
      minLabel=p.minMaxLabel(1);
      maxLabel=p.minMaxLabel(2);    
@@ -205,6 +203,7 @@ for fIdxIdx=1:numel(processFrames)
       fColorIndx=fColorIndx(edgesLabel(tailIndx));
     end
     assert(numel(fColorIndx)==size(edges,1));
+
     [tracksXY,tracksZY,tracksZX]=overlayProjGraph(XYProj,ZYProj,ZXProj, ...
       xBound,yBound,zBound,vert,edges, ... 
       myColormap,fColorIndx,'positionsLabel',positionsLabel,varargin{:});
