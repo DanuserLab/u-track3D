@@ -42,7 +42,7 @@ funParams = processDetection.getParameters();
 funParams.algorithmType= {'multiscaleDetectionDebug'};
 funParams.version='useMaxResponse';
 funParams.scales=1.25:0.5:2.5;          % Range of object scale of interest in pixel.
-funParams.Alpha=0.001;                  % p-value used for sensitivity
+funParams.alpha=0.001;                  % p-value used for sensitivity
 funParams.OutputDirectory=[MD.outputDirectory_ filesep processDetection.getProcessTag()];
 processDetection.setPara(funParams);
 paramsIn.ChannelIndex=1;                % Channel used for detection

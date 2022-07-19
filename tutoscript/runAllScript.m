@@ -1,5 +1,5 @@
-tutoScriptAdvancedVisualization
 tutoScriptBasicROI
 tutoScriptDualChannels
 tutoScriptDynROIFollowingTrackSet
 tutoScriptTrackability
+tutoScriptAdvancedVisualization

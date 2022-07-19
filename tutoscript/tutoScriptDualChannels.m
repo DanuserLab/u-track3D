@@ -42,7 +42,7 @@ processDetection.setProcessTag('centrosomeDetection'); % Naming the process for 
 MD.addProcess(processDetection);             % Adding the process to the pipeline. 
 funParams = processDetection.getParameters();
 funParams.scales=5; % object scale (can be multiple)
-funParams.Alpha=0.005; % p-value for statistical test (the lower the stricter)
+funParams.alpha=0.005; % p-value for statistical test (the lower the stricter)
                        % funParams.frameRange=[1 10];
 funParams.OutputDirectory=[MD.outputDirectory_ filesep processDetection.getProcessTag()];
 processDetection.setPara(funParams);
@@ -73,7 +73,7 @@ processDetection.setProcessTag('KTDetection'); % Naming the process for later re
 MD.addProcess(processDetection);             % Adding the process to the pipeline. 
 funParams = processDetection.getParameters();
 funParams.scales=[1.5 1.75 2.0]; % object scale (can be multiple)
-funParams.Alpha=0.005; % p-value for statistical test (the lower the stricter)
+funParams.alpha=0.005; % p-value for statistical test (the lower the stricter)
                        % funParams.frameRange=[1 10];
 funParams.RemoveRedundant=true;
 funParams.RedundancyRadius=3;

@@ -15,7 +15,7 @@ close all; clear all;
 
 outputFolder=fullfile(tempdir,'testAvancedViz');   % Output folder for the raw data
 
-loadPreviousTracks=true;             % Load trajectories if they have been computed
+loadPreviousTracks=false;             % Load trajectories if they have been computed
 backupMoviedataFile=fullfile(outputFolder,'backupMovieData.mat'); % Movies and Tracks
                                                                   % metadata
 
@@ -48,7 +48,7 @@ processDetection.setProcessTag('detection'); % Naming the process for later refe
 MD.addProcess(processDetection);             % Adding the process to the pipeline. 
 funParams = processDetection.getParameters();
 funParams.scales=1.25:0.5:2.5;          % Range of object scale of interest in pixel.
-funParams.Alpha=0.001;                  % p-value used for sensitivity
+funParams.alpha=0.001;                  % p-value used for sensitivity
 funParams.OutputDirectory=[MD.outputDirectory_ filesep processDetection.getProcessTag()];
 processDetection.setPara(funParams);
 paramsIn.ChannelIndex=1;                % Channel used for detection
