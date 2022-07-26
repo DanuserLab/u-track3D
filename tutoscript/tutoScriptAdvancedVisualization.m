@@ -11,7 +11,7 @@
 % Note: for the sake of clarity and modularity, the parameters associated to each process
 % are defined just above the execution of each process.
 
-close all; clear all;
+clear all;
 
 outputFolder=fullfile(tempdir,'testAvancedViz');   % Output folder for the raw data
 
@@ -25,7 +25,7 @@ if(loadPreviousTracks &  isfile(backupMoviedataFile))
 else 
     
  %% Download and decompress movie 
-datasetUrl='https://amubox.univ-amu.fr/s/F45XmaJe5apbF6K/download/endocyticPits_cropped.zip';
+datasetUrl='https://zenodo.org/record/6881276/files/endocyticPits_cropped.zip'
 dataFolder=retrieveRemoteDataset(datasetUrl,outputFolder);
 analysisRoot=[dataFolder '_analysis'];  %  Analysis results are stored here. 
 

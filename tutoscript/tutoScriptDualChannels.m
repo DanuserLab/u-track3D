@@ -11,7 +11,7 @@
 % Note: for the sake of clarity and modularity, the parameters associated to each process
 % are defined just above the execution of each process.
 
-close all; clear all;
+clear all;
 
 outputFolder=fullfile(tempdir,'testDualChannel');   % Output folder for the raw data
 
@@ -19,7 +19,7 @@ MTChannel=1;
 KTChannel=2;
 
 %% Download and decompress movie 
-datasetUrl='https://amubox.univ-amu.fr/s/A6KsCt6xxAXNDGB/download/prometaphase.zip';
+datasetUrl='https://zenodo.org/record/6881276/files/prometaphase.zip'; 
 dataFolder=retrieveRemoteDataset(datasetUrl,outputFolder);
 analysisRoot=[dataFolder '_analysis'];  %  Analysis results are stored here. 
 
