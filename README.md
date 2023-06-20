@@ -23,7 +23,8 @@
 U-track 3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet micoscopy. The software is associated to the following publication currently under review. 
 
 [**u-track 3D: measuring and interrogating intracellular dynamics in three dimensions**](https://doi.org/10.1101/2020.11.30.404814), *bioRxiv*, 2020, written by 
-Philippe Roudot, Wesley R Legant, Qiongjing Zou, Kevin M Dean, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and [Gaudenz Danuser](https://www.danuserlab-utsw.org/).  <https://doi.org/10.1101/2020.11.30.404814>
+Philippe Roudot, Wesley R Legant, Qiongjing Zou, Kevin M Dean, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and [Gaudenz Danuser](https://www.danuserlab-utsw.org/). 
+<https://doi.org/10.1101/2020.11.30.404814>
 
 
 <a id="org7f73dce"></a>
