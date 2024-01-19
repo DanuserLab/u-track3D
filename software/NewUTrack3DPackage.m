@@ -47,7 +47,7 @@ classdef NewUTrack3DPackage < Package
     methods (Static)
         
         function name = getName()
-            name = 'New U-Track 3D';
+            name = 'u-track3D'; % renamed from New U-Track 3D, Sep 2023 & Jan 2024.
         end
 
         function m = getDependencyMatrix(i,j)
