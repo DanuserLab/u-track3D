@@ -209,7 +209,7 @@ packageList = {
     'QFSMPackage'
     'SegmentationPackage'
     'TFMPackage'
-    'TrackingPackage'
+    % 'TrackingPackage'
     'ParkinTranslocationScoringPackage'
     'WindowingPackage'
     'ColocalizationPackage'
