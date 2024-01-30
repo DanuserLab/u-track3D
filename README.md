@@ -8,7 +8,7 @@
 2.  [Accessing and loading the code into matlab](#org7f73dce)
 3.  [Description of example datasets:](#orgb573d6b)
 4.  [Script usage](#orgbec14d8)
-5.  [Reproducing the u-track 3D paper with the tutorial scripts](#orga13ef72)
+5.  [Reproducing the u-track3D paper with the tutorial scripts](#orga13ef72)
 6.  [Performances](#org3698df1)
 7.  [GUI walk-through (Beta version)](#orgb4cad95)
     1.  [Getting started and loading data](#org3e33b65)
@@ -23,7 +23,7 @@
 
 ## Associated paper
 
-U-track 3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet micoscopy. The software is associated to the following publication currently under review. 
+u-track3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet micoscopy. The software is associated to the following publication currently under review. 
 
 [**u-track3D: Measuring, navigating, and validating dense particle trajectories in three dimensions**](https://doi.org/10.1016/j.crmeth.2023.100655), *Cell Reports Methods*, 2023, written by 
 [Philippe Roudot](https://centuri-livingsystems.org/p-roudot/), Wesley R Legant, Qiongjing Zou, Kevin M Dean, Tadamoto Isogai, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and [Gaudenz Danuser](https://www.danuserlab-utsw.org/).
@@ -142,9 +142,9 @@ To improve computation time, you want to adjust the number of core available to 
 
 <a id="orga13ef72"></a>
 
-## Reproducing the u-track 3D paper with the tutorial scripts
+## Reproducing the u-track3D paper with the tutorial scripts
 
-The scripts reproduce the majority of features used in numerical experiments presented in the u-track 3D paper. Because of the large size of the datasets used in the paper, the script operates on smaller datasets that are amenable to direct download by the community. Here is the detail of the features that are demonstrated, their associated figures in the paper, and the script that reproduces them. One script can demonstrate several feature with a same dataset:
+The scripts reproduce the majority of features used in numerical experiments presented in the u-track3D paper. Because of the large size of the datasets used in the paper, the script operates on smaller datasets that are amenable to direct download by the community. Here is the detail of the features that are demonstrated, their associated figures in the paper, and the script that reproduces them. One script can demonstrate several feature with a same dataset:
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -266,7 +266,7 @@ The software is CPU-optimized and has been tested on the following machines.
 
 ## GUI walk-through (Beta version)
 
-The GUI is generally recommended for the analysis of a couple files and test the capacity of u-track 3D on a given type of dataset. With straightforward data loading and a simplified execution pipeline, the GUI is designed toward an intuitive first experience. 
+The GUI is generally recommended for the analysis of a couple files and test the capacity of u-track3D on a given type of dataset. With straightforward data loading and a simplified execution pipeline, the GUI is designed toward an intuitive first experience. 
 
 
 <a id="org3e33b65"></a>
@@ -275,7 +275,7 @@ The GUI is generally recommended for the analysis of a couple files and test the
 
 Create a parallel pool for parallel computing in matlab using either the [command line or the graphical interface](https://www.mathworks.com/help/parallel-computing/parpool.html). Add the code folder in Matlab path. Then launch the GUI in the command line with: 
 
-    movieSelectorGUI()
+    u_quantify()
 
 Then click "new" to create a new movie
 
@@ -285,11 +285,11 @@ If the data follows the bioformat standard, then open "Import Movie using Biofor
 
 ![img](tutosmaller/movieInfoInput.png)
 
-Then launch the "New U-track 3D" application. 
+Then launch the "u-track3D" application. 
 
 ![img](tutosmaller/startUtrack3d.PNG)
 
-In order to keep the set of operation linear, u-track 3D is organized in seven processes:
+In order to keep the set of operation linear, u-track3D is organized in seven processes:
 
 1.  Maximum Intensity Projection (MIP) rendering
 2.  Detection on the full volume
@@ -310,7 +310,7 @@ Each process must be parameterized or "setup" before being run. Sometime it mere
 
 ![img](./tutosmaller/MIPParam.png)
 
-The detection parameters propose different algorithms for detection, the default approach being the one presented in the u-track 3D paper. In this beta version, the "Scales" dialog define the scales used for filtering and the Alpha value define sensitivity. Further  improvement will be made to separate different type of algorithms. 
+The detection parameters propose different algorithms for detection, the default approach being the one presented in the u-track3D paper. In this beta version, the "Scales" dialog define the scales used for filtering and the Alpha value define sensitivity. Further  improvement will be made to separate different type of algorithms. 
 
 ![img](./tutosmaller/DetetionParamaters.png)
 
