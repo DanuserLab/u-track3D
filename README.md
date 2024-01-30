@@ -1,5 +1,8 @@
+# u-track3D
 
-# Table of Contents
+[u-track goes 3D!](https://www.danuserlab-utsw.org/news-2023/december)
+
+## Table of Contents
 
 1.  [Associated paper](#org8dc205c)
 2.  [Accessing and loading the code into matlab](#org7f73dce)
@@ -18,7 +21,7 @@
 
 <a id="org8dc205c"></a>
 
-# Associated paper
+## Associated paper
 
 U-track 3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet micoscopy. The software is associated to the following publication currently under review. 
 
@@ -28,7 +31,7 @@ Philippe Roudot, Wesley R Legant, Qiongjing Zou, Kevin M Dean, Tadamoto Isogai, 
 
 <a id="org7f73dce"></a>
 
-# Accessing and loading the code into matlab
+## Accessing and loading the code into matlab
 
 Download the code in the path of your choice: 
 
@@ -41,7 +44,7 @@ Then in Matlab, one can import the code either through the matlab navigation pan
 
 <a id="orgb573d6b"></a>
 
-# Description of example datasets:
+## Description of example datasets:
 
 The tutorial scripts automatically download and process the following datasets:
 
@@ -52,7 +55,7 @@ The tutorial scripts automatically download and process the following datasets:
 
 <a id="orgbec14d8"></a>
 
-# Script usage
+## Script usage
 
 Scripting is generally recommended for the analysis of a large number of acquisitions due to its flexibility and automated rendering capabilities. At the moment, the scripting library also provides more features than the GUI: 
 
@@ -139,7 +142,7 @@ To improve computation time, you want to adjust the number of core available to 
 
 <a id="orga13ef72"></a>
 
-# Reproducing the u-track 3D paper with the tutorial scripts
+## Reproducing the u-track 3D paper with the tutorial scripts
 
 The scripts reproduce the majority of features used in numerical experiments presented in the u-track 3D paper. Because of the large size of the datasets used in the paper, the script operates on smaller datasets that are amenable to direct download by the community. Here is the detail of the features that are demonstrated, their associated figures in the paper, and the script that reproduces them. One script can demonstrate several feature with a same dataset:
 
@@ -215,7 +218,7 @@ Here is a list of the measurements that  cannot be reproduced with those scripts
 
 <a id="org3698df1"></a>
 
-# Performances
+## Performances
 
 The software is CPU-optimized and has been tested on the following machines. 
 
@@ -261,14 +264,14 @@ The software is CPU-optimized and has been tested on the following machines.
 
 <a id="orgb4cad95"></a>
 
-# GUI walk-through (Beta version)
+## GUI walk-through (Beta version)
 
 The GUI is generally recommended for the analysis of a couple files and test the capacity of u-track 3D on a given type of dataset. With straightforward data loading and a simplified execution pipeline, the GUI is designed toward an intuitive first experience. 
 
 
 <a id="org3e33b65"></a>
 
-## Getting started and loading data
+### Getting started and loading data
 
 Create a parallel pool for parallel computing in matlab using either the [command line or the graphical interface](https://www.mathworks.com/help/parallel-computing/parpool.html). Add the code folder in Matlab path. Then launch the GUI in the command line with: 
 
@@ -301,7 +304,7 @@ In order to keep the set of operation linear, u-track 3D is organized in seven p
 
 <a id="org0859d3f"></a>
 
-## Detection, tracking and review on the whole volumetric sequence
+### Detection, tracking and review on the whole volumetric sequence
 
 Each process must be parameterized or "setup" before being run. Sometime it merely involves opening the setup dialog and accepting the defaults by clicking "apply", as for example below with the MIP rendering process in the case of a single channel. This step ensures that the users explore the capacity the algorithm to adapt the parameters to their datasets.
 
@@ -334,7 +337,7 @@ Once tracks are computed ("Apply" parameter and click on "run"), trajectories ca
 
 <a id="org80d3754"></a>
 
-## Definition of DynROI and tracking in DynROI
+### Definition of DynROI and tracking in DynROI
 
 The estimation of trajectories open the door to the dynROI in step 4. Several variation of dynROI estimation are made available such as: 
 
@@ -366,7 +369,7 @@ and for tracking process:
 
 <a id="orgb793bb7"></a>
 
-# Known issues
+## Known issues
 
 -   The set of parameters for detection is confusing. Further streamlining improvement will be made for a smaller set of parameters to be visible.
 -   Detection and tracking sets used for dynROI estimation must be set manually, even when there is only one option.
@@ -375,7 +378,7 @@ and for tracking process:
 
 <a id="org58bde09"></a>
 
-# Milestones
+## Milestones
 
 -   [X] Adding Amira trajectory export in addition to detection in example script
 -   [X] Demonstrate trackability in the script
@@ -389,7 +392,7 @@ and for tracking process:
 
 <a id="org09a5f97"></a>
 
-# Software Requirements
+## Software Requirements
 
 -   This software requires the following Matlab toolboxes
     -   Matlab (tested on 2018a to 2022a)
