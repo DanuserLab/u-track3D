@@ -77,7 +77,7 @@ function [costMat,propagationScheme,kalmanFilterInfoFrame2,nonlinkMarker,...
 %
 %Khuloud Jaqaman, March 2007
 %
-% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2024, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

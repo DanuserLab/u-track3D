@@ -5,7 +5,7 @@ function [ ] = clear( )
 % cached.load
 % cached.imfinfo
 %
-% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2024, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

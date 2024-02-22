@@ -3,7 +3,7 @@ function [umPerMin] = pixPerFrame2umPerMin(pixPerFrame,secPerFrame,pixSizeNm)
 %
 % [umPerMin] = pixPerFrame2umPerMin(pixPerFrame,secPerFrame,pixSizeNm)
 %
-% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2024, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 

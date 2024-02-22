@@ -3,7 +3,7 @@ classdef NewUTrack3DPackage < Package
     %
     % Qiongjing (Jenny) Zou, July 2019
 %
-% Copyright (C) 2022, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2024, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 
@@ -47,7 +47,7 @@ classdef NewUTrack3DPackage < Package
     methods (Static)
         
         function name = getName()
-            name = 'u-track3D'; % renamed from New U-Track 3D, Sep 2023 & Jan 2024.
+            name = 'New U-Track 3D';
         end
 
         function m = getDependencyMatrix(i,j)
