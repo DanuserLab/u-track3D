@@ -1,4 +1,5 @@
 # u-track3D
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10055024.svg)](https://doi.org/10.5281/zenodo.10055024)
 
 [u-track goes 3D!](https://www.danuserlab-utsw.org/news-2023/december)
 
