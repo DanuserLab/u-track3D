@@ -292,20 +292,20 @@ classdef DetectionProcess < ImageAnalysisProcess
                     MD = MO(1);
                 else
                     MD = MO;
-                end                
-            end
+                end
 
-            if isempty(MD)
-               warning('MovieData properties not specified (2D vs. 3D)');
-               disp('Displaying both 2D and 3D Detection processes');
-            elseif MD.is3D
-                disp('Detected 3D movie');
-                disp('Displaying 3D Detection processes only');
-                procClasses(1:5) = [];
-            elseif ~MD.is3D
-                disp('Detected 2D movie');
-                disp('Displaying 2D Detection processes only');
-                procClasses(7) = [];
+                if isempty(MD)
+                    warning('MovieData properties not specified (2D vs. 3D)');
+                    disp('Displaying both 2D and 3D Detection processes');
+                elseif MD.is3D
+                    disp('Detected 3D movie');
+                    disp('Displaying 3D Detection processes only');
+                    procClasses(1:5) = [];
+                elseif ~MD.is3D
+                    disp('Detected 2D movie');
+                    disp('Displaying 2D Detection processes only');
+                    procClasses(7) = [];
+                end
             end
             procClasses = cellfun(@func2str, procClasses, 'Unif', 0);
         end

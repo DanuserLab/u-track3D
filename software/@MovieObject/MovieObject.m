@@ -201,6 +201,11 @@ classdef  MovieObject < hgsetget
                     % MATLAB:MOVIEFILE:OSError is an undocumented error if
                     % the file does not exist
                     % do nothing
+                    elseif(strcmp(err.identifier,'MATLAB:MOVEFILE:FileNotFound') && ...
+                       exist(fullPath,'file') ~= 2)
+                    % Mathworks changes the err.identifier for movefile in
+                    % 2022b and after, from MATLAB:MOVIEFILE:OSError to MATLAB:MOVEFILE:FileNotFound
+                    % do nothing
                     elseif(~strcmp(err.identifier,'MATLAB:MOVEFILE:FileDoesNotExist'))
                         warning('MovieObject:saveBackup:Failure', ...
                             'Failed to save backup\n%s to\n%s', ...

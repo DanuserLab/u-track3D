@@ -33,7 +33,7 @@ classdef TrackingPackage < Package
                 outputDir = ip.Results.outputDir;
                 
                 super_args{1} = owner;
-                super_args{2} = [outputDir  filesep 'TrackingPackage'];
+                super_args{2} = [outputDir  filesep 'uTrackPackage']; % Updated 2024-9-3. The old save folder name was TrackingPackage
             end
                  
             % Call the superclass constructor
@@ -43,7 +43,7 @@ classdef TrackingPackage < Package
     methods (Static)
         
         function name = getName()
-            name = 'U-Track';
+            name = 'u-track';
         end 
         function m = getDependencyMatrix(i,j)   
             m = [0 0 0;  %1 DetectionProcess

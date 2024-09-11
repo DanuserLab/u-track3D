@@ -36,7 +36,7 @@ classdef NewUTrack3DPackage < Package
                 outputDir = ip.Results.outputDir;
                 
                 super_args{1} = owner;
-                super_args{2} = [outputDir  filesep 'NewUTrack3DPackage'];
+                super_args{2} = [outputDir  filesep 'uTrack3DPackage']; % Updated 2024-9-3. The old save folder name was NewUTrack3DPackage
             end
                  
             % Call the superclass constructor

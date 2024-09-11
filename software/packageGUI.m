@@ -199,8 +199,15 @@ isFig = ~cellfun(@isempty,regexp(userDataFields,'Fig$'));
 userDataFigs = userDataFields(isFig);
 for i=1:numel(userDataFigs)
      figHandles = userData.(userDataFigs{i});
+     if ~iscell(figHandles)
      validFigHandles = figHandles(ishandle(figHandles)&figHandles ~= 0);
      delete(validFigHandles);
+     else 
+        % this is for new APP DESIGNER UI:
+         validFigHandles = cellfun(@(x) x((ishandle(x) | isa(x, 'matlab.apps.AppBase')) & x ~= 0), figHandles, 'UniformOutput', false);
+         validFigHandles = validFigHandles(~cellfun(@isempty, validFigHandles));
+         cellfun(@delete, validFigHandles);
+     end
 end
 
 % msgboxGUI used for error reports
@@ -279,15 +286,15 @@ procID = str2double(prop(length('pushbutton_set_')+1:end));
 crtProc=userData.crtPackage.getProcessClassNames{procID};
 crtProcGUI =eval([crtProc '.GUI']);
 try 
-    userData.setFig(procID) = crtProcGUI('mainFig',handles.figure1,procID);
+    userData.setFig{procID} = crtProcGUI('mainFig',handles.figure1,procID); % Save setFig in cell array {}, since new APP DESIGNER UI has diff types
 catch ME
-    if exist('deactivateCLIBackup','var') == 1 && deactivateCLIBackup
+    if exist('deactivateCLIBackup','var') == 1 && isempty(deactivateCLIBackup)
         rethrow(ME)
     else
         msgbox(ME.message)
         warning('Loading Custom GUI failed! -- Running CLI parameter config as BACKUP - follow instructions');
         uiwait(msgbox({'Loading Custom GUI failed!','Running CLI parameter config as BACKUP','Please follow instructions'}));
-        userData.setFig(procID) = cliGUI('mainFig',handles.figure1,procID);
+        userData.setFig{procID} = cliGUI('mainFig',handles.figure1,procID);
     end
 end
 
@@ -348,7 +355,7 @@ if ~isequal(userData.packageName, 'XcorrFluctuationPackage')
     elseif ismac
         system(sprintf('open %s',regexptranslate('escape',outputDir)));
     elseif isunix
-        status = system(sprintf('xdg-open "%s"',regexptranslate('escape',outputDir)));
+        status = system(sprintf('gio open "%s"',regexptranslate('escape',outputDir)));
         % If a non-zero integer is returned, then display a message box
         if(status)
             msgbox(sprintf('Results can be found under %s',regexptranslate('escape',outputDir)));

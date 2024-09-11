@@ -99,7 +99,7 @@ channelPublicFields= cellfun(@(x) strcmpi(x,'public'),channelFieldsAccess);
 channels(nChan)=Channel();
 for i = 1:nChan
     disp('Cropping channel:')
-    disp(newImDirs{i});
+    disp(imDirs{i});
     disp('Results will be saved under:')
     disp(newImDirs{i});
     mkClrDir(newImDirs{i});
