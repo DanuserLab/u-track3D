@@ -38,7 +38,7 @@ function RGBVol=greenRedRender(greenCh,redCh)
     RGBVol=repmat(greenCh,1,1,3);
     %RGBThree(:,:,1)=max(rMaxXY,rmaxXYKin);
 %
-% Copyright (C) 2024, Danuser Lab - UTSouthwestern 
+% Copyright (C) 2025, Danuser Lab - UTSouthwestern 
 %
 % This file is part of NewUtrack3DPackage.
 % 
