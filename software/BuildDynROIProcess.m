@@ -218,13 +218,13 @@ classdef  BuildDynROIProcess < ImageAnalysisProcess & NonSingularProcess
                 
         function output = getDrawableOutput()
             
-            output(1).name = 'Dynamic RIO';
+            output(1).name = 'Dynamic ROI';
             output(1).var = 'boundingBox';             
             output(1).formatData = @boundingBoxFormat;
             output(1).defaultDisplayMethod = @PolygonsDisplay;
             output(1).type = 'overlay';
 
-            output(2).name = 'Dynamic RIO Raw Image';
+            output(2).name = 'Dynamic ROI Raw Image';
             output(2).var = 'movieDataDynROICell';             
             output(2).formatData = @mat2gray;
             output(2).defaultDisplayMethod = @ImageDisplay;
