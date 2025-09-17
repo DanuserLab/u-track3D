@@ -269,6 +269,7 @@ The software is CPU-optimized and has been tested on the following machines.
 
 The GUI is generally recommended for the analysis of a couple files and test the capacity of u-track3D on a given type of dataset. With straightforward data loading and a simplified execution pipeline, the GUI is designed toward an intuitive first experience. 
 
+📺 Tutorial video: [How to Run u-track3D (YouTube)](https://youtu.be/8P1mZZxGhyI?si=n1tAmmT-KWFBMqIm)
 
 <a id="org3e33b65"></a>
 
