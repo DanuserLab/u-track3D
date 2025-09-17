@@ -402,7 +402,6 @@ and for tracking process:
     -   Image Processing Toolbox
     -   Control System Toolbox
     -   Optimization Toolbox
-    -   Image Processing Toolbox
     -   Statistics and Machine Learning Toolbox
     -   Curve Fitting Toolbox
     -   Computer Vision Toolbox
@@ -410,6 +409,9 @@ and for tracking process:
 
 -   This software has been tested on the following OS
     -   Linux Red Hat 7
+      
+-   Other Dependencies
+    -   GNU Scientific Library (GSL) – required for running the MEX files. Tested with gsl/1.15.
 
 ----------------------
 [Danuser Lab Website](https://www.danuserlab-utsw.org/)
