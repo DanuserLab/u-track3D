@@ -27,7 +27,7 @@
 u-track3D tackles on-going challenges in the interpretation and quantitative analysis of large arrangements of 3D trajectories as it arises with the measurement of intracellular dynamics with light-sheet microscopy. The software is associated to the following publication. 
 
 [**u-track3D: Measuring, navigating, and validating dense particle trajectories in three dimensions**](https://doi.org/10.1016/j.crmeth.2023.100655), *Cell Reports Methods*, 2023, written by 
-[Philippe Roudot](https://centuri-livingsystems.org/p-roudot/), Wesley R Legant, Qiongjing Zou, Kevin M Dean, Tadamoto Isogai, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and [Gaudenz Danuser](https://www.danuserlab-utsw.org/).
+[Philippe Roudot](https://centuri-livingsystems.org/p-roudot/), Wesley R Legant, Qiongjing Zou, Kevin M Dean, Tadamoto Isogai, Erik S Welf, Ana F David, Daniel W Gerlich, Reto Fiolka, Eric Betzig, and Gaudenz Danuser.
 
 
 <a id="org7f73dce"></a>
@@ -414,6 +414,4 @@ and for tracking process:
     -   GNU Scientific Library (GSL) – required for running the MEX files. Tested with gsl/1.15.
 
 ----------------------
-[Danuser Lab Website](https://www.danuserlab-utsw.org/)
-
 [Software Links](https://github.com/DanuserLab)
